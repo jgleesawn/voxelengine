@@ -37,8 +37,10 @@ int main( int argc, char* args[] ) {
 
 	int kbsize;
 	const Uint8 * kb = SDL_GetKeyboardState(&kbsize);
-	
+
+	std::cerr << "pregame" << std::endl;	
 	Game game;
+	std::cerr << "preinput" << std::endl;
 	game.addInput((void*)kb, kbsize, sizeof(Uint8));
 
 	bool quit = false;
@@ -53,6 +55,7 @@ int main( int argc, char* args[] ) {
 				break;
 			}
 		}
+		std::cerr << " Loop ";
 		game.Loop();
 
 		SDL_GL_SwapWindow(window);

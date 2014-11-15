@@ -2,6 +2,21 @@
 
 #include <iostream>
 
+exposedOPCS::exposedOPCS(float res_in) : pcl::octree::OctreePointCloudSearch<pcl::PointXYZ>(res_in) {}
+
+void exposedOPCS::genKey(const pcl::PointXYZ & point, pcl::octree::OctreeKey & key_arg) const {
+	genOctreeKeyforPoint(point, key_arg);
+}
+void exposedOPCS::genKey(const float & point_x, const float & point_y, const float & point_z, pcl::octree::OctreeKey & key_arg) const {
+	pcl::PointXYZ point;
+	point.x = point_x;
+	point.y = point_y;
+	point.z = point_z;
+
+	genOctreeKeyforPoint(point, key_arg);
+}
+
+
 World::World() : octree(1.0f)
 		, cloud(new pcl::PointCloud<pcl::PointXYZ>) {
 	focus = 0;	//camera

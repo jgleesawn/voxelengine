@@ -15,13 +15,17 @@
 //May have to change Render function to virtual.
 
 class BasicRenderer {
+protected:
 	GLmanager * glm;
 
 	GLuint theProgram;
-	GLint uvar[6];	//Uniform variables used because #120 doesn't support explicit locations
+	GLint * uvar;	//Uniform variables used because #120 doesn't support explicit locations
+	int numUniforms;
+
+	virtual void Initialize();
 public:
-	BasicRenderer();
-	~BasicRenderer() { glDeleteProgram(theProgram); }
+	BasicRenderer(int numU = 6);
+	~BasicRenderer() { glDeleteProgram(theProgram); delete uvar; }
 
 	void setGLM(GLmanager *);
 

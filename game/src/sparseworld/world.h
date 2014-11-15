@@ -11,10 +11,18 @@
 #include "object/object.h"
 #include "object/renderable.h"
 
+class exposedOPCS : public pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> {
+public:
+	exposedOPCS(float);
+	void genKey(const pcl::PointXYZ & point, pcl::octree::OctreeKey & ) const;
+	void genKey(const float & point_x, const float & point_y, const float & point_z, pcl::octree::OctreeKey & ) const;
+};
+
 class World {
 public:
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
-	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree;
+//	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree;
+	exposedOPCS octree;
 
 	std::vector<Object *> objects;
 	std::vector<Renderable *> renObjs;

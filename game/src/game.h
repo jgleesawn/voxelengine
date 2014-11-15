@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <string>
+#include <map>
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -10,6 +11,7 @@
 #include <vector>
 
 #include "glmanager/glengine.h"
+#include "glmanager/instrenderer.h"
 #include "interface/interface.h"
 
 #include "sparseworld/world.h"
@@ -18,13 +20,14 @@ class Game {
 	
 public:
 	GLmanager glm;
-	BasicRenderer * ren;
+	InstRenderer * ren;
 	Viewport * view;
 	World w;
 
 	std::vector<input> inputs;
 
-	std::vector<gfxObj_t> gfxObjs;
+	std::vector<int> instance_ids;
+//	std::vector<gfxObj_t> gfxObjs;
 //	std::vector<Renderable *> renObjs;
 
 //	Interface<Viewport> interface;

@@ -37,4 +37,5 @@ void printv(const glm::vec3 &);
 void printv(const glm::vec4 &);
 void printq(const glm::quat &);
 void printm(const glm::mat4 &);
+
 #endif

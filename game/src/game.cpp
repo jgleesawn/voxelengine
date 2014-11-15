@@ -2,32 +2,33 @@
 
 Game::Game() {
 	glewInit();
-	ren = new BasicRenderer();
+	if( GLEW_ARB_instanced_arrays )
+		std::cout << "instanced arrays" << std::endl;
+	else
+		std::cout << "no instanced arrays" << std::endl;
+		
+	ren = new InstRenderer();
 	ren->setGLM(&glm);
+
+	std::cerr << "renderer loaded." << std::endl;
 
 	view = new Viewport(glm::vec4(0.0f, 0.0f, 20.0f, 0.0f));
 	w.camera = w.addObject(view, view->position);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	std::vector<std::string> fileNames;
 
-for( int j=0; j<10; j++ ) {
-	fileNames.clear();
-	for( int i=0; i<1000; i++ )
-		fileNames.push_back("res/nonTriangle/untitled.obj");
-//		fileNames.push_back("res/nonTriangle/untitled1.obj");
+for( int j=0; j<1; j++ ) {
+	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
 
-	gfxObjs = glm.Load(fileNames);
-
-	for( int i=0; i<gfxObjs.size(); i++ ) {
+	for( int i=0; i<1000; i++ ) {
 		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
-		pos *= 500.0f;
-		pos -= 250.0f;
+		pos *= 200.0f;
+		pos -= 100.0f;
 		pos.w = 0.0f;
 		glm::quat q((float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5 );
 		q = glm::normalize(q);
-		Renderable * ro = new Renderable(pos, gfxObjs[i], q);
+		Renderable * ro = new Renderable(pos, instance_ids.back(), q);
 
 		w.addObject(ro,pos);
 		w.makeRenderable(ro->index);
@@ -81,16 +82,34 @@ void Game::Loop() {
 	ren->Use();
 	ren->setCameraRotationPerspective( view->getRotMat(), view->perspectiveMatrix );
 	ren->setCameraPos(*vpos);
+
+	int id, ind;
+	InstInfo ii;
+
+	std::map<int, std::vector<InstInfo> > renderInfo;
 	for( int i=0; i<w.renObjs.size(); i++ ) {
-		glm::vec4 * opos = (glm::vec4 *)&(w.cloud->points[w.renObjs[i]->index]);
-		ren->Render(w.renObjs[i], *opos);
+		id = w.renObjs[i]->instance_id;
+		ind = w.renObjs[i]->index;
+		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
+		ii.depthMask_in = 1;
+		renderInfo[id].push_back(ii);
 	}
+	glm::vec4 llb(0.0f), urf(0.0f);
+	w.octree.getBoundingBox((double&)llb.x, (double&)llb.y, (double&)llb.z, (double&)urf.x, (double&)urf.y, (double&)urf.z);
+	float resolution = w.octree.getResolution();
+
+	std::map<int, std::vector<InstInfo> >::iterator it;
+	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
+		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
+	}
+
 //Starts at begin()+1 because the closest to the camera is the camera itself. //assumption
-	std::vector<int>::iterator it;
-	for( it = w.selection.begin()+1; it != w.selection.end(); it++ ) {
-		glm::vec4 * opos = (glm::vec4 *)&(w.cloud->points[*it]);
-		ren->Wireframe((Renderable *)w.objects[*it], *opos);
-	}
+//	std::vector<int>::iterator it;
+//	for( it = w.selection.begin()+1; it != w.selection.end(); it++ ) {
+//		glm::vec4 * opos = (glm::vec4 *)&(w.cloud->points[*it]);
+//		ren->Wireframe((Renderable *)w.objects[*it], *opos);
+//	}
+
 //FIX THIS, relying on camera being Object[0]
 //	if( w.focus ) {
 //		glm::vec4 * opos = (glm::vec4 *)&(w.cloud->points[w.objects[w.focus]->index]);

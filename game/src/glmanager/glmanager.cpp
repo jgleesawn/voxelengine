@@ -14,6 +14,15 @@ GLmanager::~GLmanager() {
 		delete gfxObjs.back();
 		gfxObjs.pop_back();
 	}
+	while( !gfxInst.empty() ) {
+		glDeleteBuffers(1, &gfxInst.back()->VBO);
+		glDeleteBuffers(1, &gfxInst.back()->IBO);
+		glDeleteBuffers(1, &gfxInst.back()->InstBO);
+		glDeleteVertexArrays(1, &gfxInst.back()->VAO);
+
+		delete gfxInst.back();
+		gfxInst.pop_back();
+	}
 }
 
 //vbos are updated	(DYNAMIC)
@@ -83,5 +92,56 @@ std::vector<gfxObj_t> GLmanager::Load(const std::vector< std::string > & fileNam
 		vobj.push_back(std::move(loadObjFile(fileNames[i])));
 	return Load(vobj);
 }
+
+int GLmanager::LoadInst(const objModel & obj) {
+	Inst * inst = new Inst;
+
+	size_t vbo_struct_size = sizeof(*obj.vertices.data());
+	size_t ibo_struct_size = sizeof(*obj.indices.data());
+	size_t inst_struct_size = sizeof(InstInfo);
+	size_t max_instances = 10000;
+
+	inst->numIndicesPerInstance = obj.indices.size();
+	
+	glGenBuffers(1, &inst->VBO);
+	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
+	glBufferData( GL_ARRAY_BUFFER, vbo_struct_size * obj.vertices.size(), obj.vertices.data(), GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &inst->IBO);
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, inst->IBO );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, ibo_struct_size * obj.indices.size(), obj.indices.data(), GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &inst->InstBO);
+	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
+	glBufferData( GL_ARRAY_BUFFER, inst_struct_size * max_instances, NULL, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &inst->VAO);
+	glBindVertexArray(inst->VAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+//	glEnableVertexAttribArray(2);
+	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vbo_struct_size, (void*) 0);
+	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
+	glVertexAttribPointer(1, 4, GL_UNSIGNED_INT, GL_FALSE, inst_struct_size, (void*) 0);
+	glVertexAttribDivisor(0,0);
+	glVertexAttribDivisor(1,1);
+//	glVertexAttribDivisor(2,1);
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, inst->IBO );
+
+	glBindVertexArray(0);
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
+
+	gfxInst.push_back(inst);
+
+	return gfxInst.size()-1;
+}
+
+int GLmanager::LoadInst(const std::string & fileName ) {
+	return LoadInst(std::move(loadObjFile(fileName)));
+}
+
+
 
 

@@ -1,19 +1,16 @@
 #include "basicrenderer.h"
 
-//Need Init function so that the GL context is set up already;
-//VE is created before GL context is set up.
-BasicRenderer::BasicRenderer() : glm(NULL) {
+void BasicRenderer::Initialize() {
 	std::vector<shaderName> shaderNames;
 	shaderNames.push_back(shaderName(GL_VERTEX_SHADER, std::string("renderers/basic.v.shader")));
 //	shaderNames.push_back(shaderName(GL_GEOMETRY_SHADER, std::string("renderers/basic.g.shader")));
 	shaderNames.push_back(shaderName(GL_FRAGMENT_SHADER, std::string("renderers/basic.f.shader")));
-
 	theProgram = GLProgramBase().InitializeProgram(shaderNames);
 
 	std::cout << theProgram << std::endl;
 
 	glUseProgram(theProgram);
-//	GLint uvar[5];
+
 	uvar[0] = glGetUniformLocation( theProgram, "objPosition");
 	uvar[1] = glGetUniformLocation( theProgram, "objRotation");
 	uvar[2] = glGetUniformLocation( theProgram, "viewOffset");
@@ -21,9 +18,16 @@ BasicRenderer::BasicRenderer() : glm(NULL) {
 	uvar[4] = glGetUniformLocation( theProgram, "Perspective");
 	uvar[5] = glGetUniformLocation( theProgram, "uColor");
 
-	for( int i=0; i<5; i++ )
+	for( int i=0; i<numUniforms; i++ )
 		std::cout << uvar[i] << std::endl;
 	glUseProgram(0);
+}
+
+//Need Init function so that the GL context is set up already;
+//VE is created before GL context is set up.
+BasicRenderer::BasicRenderer(int numU) : glm(NULL), numUniforms(numU) {
+	uvar = new int[numU];
+	Initialize();	//Call this as it is virtual, can specify on a per-renderer basis.
 }
 
 void BasicRenderer::setGLM(GLmanager * glm_in) {

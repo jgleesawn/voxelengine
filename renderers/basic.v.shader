@@ -1,4 +1,4 @@
-#version 330
+#version 120
 #extension GL_ARB_explicit_attrib_location : enable
 //#extension GL_ARB_vertex_array_object : enable
 //#extension GL_ARB_vertex_buffer_object : enable

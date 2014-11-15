@@ -6,8 +6,9 @@
 
 class Renderable : public Object {
 public:
-	gfxObj_t gfxObj;
-	Renderable(glm::vec4, gfxObj_t, glm::quat or_in = glm::quat());
+	int instance_id;
+	gfxObj_t gfxObj;	//Removed usage when instancing was added. possibly use both, we will see.
+	Renderable(glm::vec4, int, glm::quat or_in = glm::quat());
 };
 
 
