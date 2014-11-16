@@ -53,17 +53,17 @@ void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & 
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
+
+//	for( int i=0; i<3; i++ )
+//		std::cout << llb[i] << " ";
+//	std::cout << std::endl;
+//	std::cout << std::endl;
 		
 	glUniform4f(uvar[5], 0.5f, 0.5f, 0.0f, 1.0f);
 	
 
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
-	unsigned int * uptr = (unsigned int *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
-	for( int i=0; i<12; i++ )
-		std::cout << uptr[i] << " ";
-	std::cout << std::endl;
-	glUnmapBuffer(GL_ARRAY_BUFFER);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	
 	GLuint vao = inst.VAO;
@@ -73,7 +73,8 @@ void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & 
 	int cind = inst.numIndicesPerInstance;
 //std::cout << inst.VBO << " " << inst.IBO << " " << inst.InstBO << " " << inst.VAO << std::endl;
 //std::cout << cind << " " << count << std::endl;
-	glDrawElementsInstanced( GL_POINTS, cind, GL_UNSIGNED_INT, (void*)0, count );
+//	glDrawElementsInstanced( GL_POINTS, cind, GL_UNSIGNED_INT, (void*)0, count );
+	glDrawElementsInstanced( GL_TRIANGLES, cind, GL_UNSIGNED_INT, (void*)0, count );
 //	glDrawElementsBaseVertex( GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0, 0 );
 	glBindVertexArray(0);
 }
@@ -84,7 +85,7 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
 		
-	glUniform4f(uvar[5], 0.5f, 0.5f, 0.0f, 1.0f);
+	glUniform4f(uvar[5], 0.0f, 1.0f, 1.0f, 1.0f);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());

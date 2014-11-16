@@ -99,7 +99,7 @@ int GLmanager::LoadInst(const objModel & obj) {
 	size_t vbo_struct_size = sizeof(*obj.vertices.data());
 	size_t ibo_struct_size = sizeof(*obj.indices.data());
 	size_t inst_struct_size = sizeof(InstInfo);
-	size_t max_instances = 10000;
+	size_t max_instances = 1000000;
 
 	inst->numIndicesPerInstance = obj.indices.size();
 	
@@ -129,7 +129,7 @@ int GLmanager::LoadInst(const objModel & obj) {
 	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vbo_struct_size, (void*) 0);
 	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
-	glVertexAttribPointer(1, 4, GL_UNSIGNED_INT, GL_FALSE, inst_struct_size, (void*) 0);
+	glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, inst_struct_size, (void*) 0);
 	glVertexAttribDivisor(0,0);
 	glVertexAttribDivisor(1,1);
 //	glVertexAttribDivisor(2,1);

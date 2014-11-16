@@ -26,16 +26,22 @@ void main()
 //	float boxDim;
 //	vertexPos.xyz += lowerLeftBound.xyz;
 
-//	vertexPos.xyz += vec3(position.xyz);
+	vertexPos.xyz = vertexCoord.xyz*resolution/2.0f;
+	vertexPos.xyz += resolution*vec3(position.xyz);
+	vertexPos.xyz += lowerLeftBound.xyz;
 //	vertexPos.xyz -= 50.0f;
 //	vertexPos.xyz /= 100.0f;
+//	vertexPos.xyz = vertexCoord.xyz;
+//	vertexPos.xyz += vec3(1.0f, 0.0f, 0.0f) * gl_InstanceID;
+//	vertexPos.z -= 10.0f;
+//	vertexPos.z *= -1.0f;
 	vertexPos.w = 1.0f;
 
 //	vertexPos.xyz += vertexCoord.xyz * resolution / 2.0f; //*position.w would scale based on depthMask.
 
 //	vertexPos.xyz += lowerLeftBound.xyz;
-	vertexPos.xyz += vertexCoord.xyz - vec3(0.0f, 0.0f, 10.0f); //*position.w would scale based on depthMask.
-	vertexPos.xyz += vec3(1.0f, 0.0f, 0.0f)*gl_InstanceID; //vec3(position.xyz)*100.0f;
+//	vertexPos.xyz += vertexCoord.xyz - vec3(0.0f, 0.0f, 10.0f); //*position.w would scale based on depthMask.
+//	vertexPos.xyz += vec3(1.0f, 0.0f, 0.0f)*gl_InstanceID; //vec3(position.xyz)*100.0f;
 
 //	vertexPos.xyz += vec3(position.xyz);
 //	vertexPos.xyz += lowerLeftBound.xyz;
