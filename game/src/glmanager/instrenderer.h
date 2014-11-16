@@ -16,8 +16,8 @@
 //May have to change Render function to virtual.
 
 class InstRenderer : public BasicRenderer {
-	virtual void Initialize();
 public:
+	virtual void Initialize();
 	InstRenderer();
 	~InstRenderer() { }//glDeleteProgram(theProgram); }
 

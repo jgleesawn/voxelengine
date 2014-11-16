@@ -1,8 +1,12 @@
 #include "glprogrambase.h"
 
+#include <iostream>
 
 GLuint GLProgramBase::InitializeProgram(std::vector<shaderName> & shaderNames)
 {
+	for( int i=0; i<shaderNames.size(); i++ )
+		std::cout << shaderNames[i].second << std::endl;
+
 	std::vector<GLuint> shaderList;
 	std::vector<shaderName>::iterator it;
 	for( it = shaderNames.begin(); it != shaderNames.end(); it++) {

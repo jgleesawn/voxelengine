@@ -22,8 +22,8 @@ protected:
 	GLint * uvar;	//Uniform variables used because #120 doesn't support explicit locations
 	int numUniforms;
 
-	virtual void Initialize();
 public:
+	virtual void Initialize();
 	BasicRenderer(int numU = 6);
 	~BasicRenderer() { glDeleteProgram(theProgram); delete uvar; }
 

@@ -8,6 +8,7 @@ Game::Game() {
 		std::cout << "no instanced arrays" << std::endl;
 		
 	ren = new InstRenderer();
+	ren->Initialize();
 	ren->setGLM(&glm);
 
 	std::cerr << "renderer loaded." << std::endl;
@@ -25,6 +26,9 @@ for( int j=0; j<1; j++ ) {
 		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
 		pos *= 200.0f;
 		pos -= 100.0f;
+//		pos.x = 0.0f;
+//		pos.y = 0.0f;
+//		pos.z = -0.5f;
 		pos.w = 0.0f;
 		glm::quat q((float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5 );
 		q = glm::normalize(q);
@@ -91,11 +95,23 @@ void Game::Loop() {
 		id = w.renObjs[i]->instance_id;
 		ind = w.renObjs[i]->index;
 		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
+		ii.position[0] = i;
+		ii.position[1] = 0;
+		ii.position[2] = 0;
+//		ii.position[0] = 100*(float)rand()/RAND_MAX;
+//		ii.position[1] = 100*(float)rand()/RAND_MAX;
+//		ii.position[2] = 100*(float)rand()/RAND_MAX;
+		for( int i=0; i<3; i++ ) {
+//			std::cout << ii.position[i] << " ";
+		}
+//		std::cout << std::endl;
 		ii.depthMask_in = 1;
 		renderInfo[id].push_back(ii);
 	}
 	glm::vec4 llb(0.0f), urf(0.0f);
-	w.octree.getBoundingBox((double&)llb.x, (double&)llb.y, (double&)llb.z, (double&)urf.x, (double&)urf.y, (double&)urf.z);
+	double x,y,z;
+	w.octree.getBoundingBox(x, y, z, (double&)urf.x, (double&)urf.y, (double&)urf.z);
+	llb.x = x; llb.y = y; llb.z = z;
 	float resolution = w.octree.getResolution();
 
 	std::map<int, std::vector<InstInfo> >::iterator it;

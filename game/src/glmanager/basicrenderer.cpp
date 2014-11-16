@@ -27,7 +27,6 @@ void BasicRenderer::Initialize() {
 //VE is created before GL context is set up.
 BasicRenderer::BasicRenderer(int numU) : glm(NULL), numUniforms(numU) {
 	uvar = new int[numU];
-	Initialize();	//Call this as it is virtual, can specify on a per-renderer basis.
 }
 
 void BasicRenderer::setGLM(GLmanager * glm_in) {

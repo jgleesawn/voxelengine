@@ -107,15 +107,21 @@ int GLmanager::LoadInst(const objModel & obj) {
 	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
 	glBufferData( GL_ARRAY_BUFFER, vbo_struct_size * obj.vertices.size(), obj.vertices.data(), GL_DYNAMIC_DRAW);
 
+	std::cout << "vbo size: " << vbo_struct_size * obj.vertices.size() << std::endl;
+	
 	glGenBuffers(1, &inst->IBO);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, inst->IBO );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, ibo_struct_size * obj.indices.size(), obj.indices.data(), GL_DYNAMIC_DRAW);
+
+	std::cout << "ibo size: " << ibo_struct_size * obj.indices.size() << std::endl;
 
 	glGenBuffers(1, &inst->InstBO);
 	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
 	glBufferData( GL_ARRAY_BUFFER, inst_struct_size * max_instances, NULL, GL_DYNAMIC_DRAW);
 
-	glGenBuffers(1, &inst->VAO);
+	std::cout << "ibo size: " << inst_struct_size * max_instances << std::endl;
+
+	glGenVertexArrays(1, &inst->VAO);
 	glBindVertexArray(inst->VAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -134,6 +140,8 @@ int GLmanager::LoadInst(const objModel & obj) {
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 
 	gfxInst.push_back(inst);
+
+	std::cout << inst->VBO << " " << inst->IBO << " " << inst->InstBO << " " << inst->VAO << std::endl;
 
 	return gfxInst.size()-1;
 }

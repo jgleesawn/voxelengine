@@ -24,7 +24,12 @@ void InstRenderer::Initialize() {
 	glUseProgram(0);
 }
 
-InstRenderer::InstRenderer() : BasicRenderer(6) { }
+InstRenderer::InstRenderer() { 
+//	std::cout << "inst" << std::endl;
+	glm = NULL;
+	uvar = new int[6];
+	numUniforms = 6;
+}
 
 
 /*
@@ -51,15 +56,26 @@ void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & 
 		
 	glUniform4f(uvar[5], 0.5f, 0.5f, 0.0f, 1.0f);
 	
+
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
+	unsigned int * uptr = (unsigned int *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+	for( int i=0; i<12; i++ )
+		std::cout << uptr[i] << " ";
+	std::cout << std::endl;
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+	glBindBuffer(GL_ARRAY_BUFFER,0);
 	
 	GLuint vao = inst.VAO;
 	glBindVertexArray(vao);
 	
 	int count = vii.size();
 	int cind = inst.numIndicesPerInstance;
-	glDrawElementsInstanced( GL_TRIANGLES, cind, GL_UNSIGNED_INT, (void*)0, count );
+//std::cout << inst.VBO << " " << inst.IBO << " " << inst.InstBO << " " << inst.VAO << std::endl;
+//std::cout << cind << " " << count << std::endl;
+	glDrawElementsInstanced( GL_POINTS, cind, GL_UNSIGNED_INT, (void*)0, count );
+//	glDrawElementsBaseVertex( GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0, 0 );
+	glBindVertexArray(0);
 }
 
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
@@ -72,6 +88,7 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	GLuint vao = inst.VAO;
 	glBindVertexArray(vao);
@@ -79,6 +96,7 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	int count = vii.size();
 	int cind = inst.numIndicesPerInstance;
 	glDrawElementsInstanced( GL_LINE_STRIP, cind, GL_UNSIGNED_INT, (void*)0, count );
+	glBindVertexArray(0);
 }
 
 

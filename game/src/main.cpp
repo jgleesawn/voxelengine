@@ -55,7 +55,7 @@ int main( int argc, char* args[] ) {
 				break;
 			}
 		}
-		std::cerr << " Loop ";
+//		std::cerr << " Loop ";
 		game.Loop();
 
 		SDL_GL_SwapWindow(window);

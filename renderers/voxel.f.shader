@@ -1,6 +1,6 @@
-#version 120 
+#version 330 
 
-//out vec4 outputColor;
+out vec4 outputColor;
 
 uniform vec4 uColor; 
 const vec4 firstColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);
@@ -14,5 +14,6 @@ void main()
 
 //	outputColor = firstColor; //mix(firstColor, secondColor, currLerp);
 //	gl_FragColor = firstColor;
-	gl_FragColor = uColor;
+//	gl_FragColor = uColor;
+	outputColor = uColor;
 }
