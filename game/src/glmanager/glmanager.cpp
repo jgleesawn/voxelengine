@@ -129,7 +129,7 @@ int GLmanager::LoadInst(const objModel & obj) {
 	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vbo_struct_size, (void*) 0);
 	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
-	glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, inst_struct_size, (void*) 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) 0);
 	glVertexAttribDivisor(0,0);
 	glVertexAttribDivisor(1,1);
 //	glVertexAttribDivisor(2,1);

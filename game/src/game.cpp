@@ -22,7 +22,7 @@ Game::Game() {
 for( int j=0; j<1; j++ ) {
 	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
 
-	for( int i=0; i<50000; i++ ) {
+	for( int i=0; i<10000; i++ ) {
 		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
 		pos *= 200.0f;
 		pos -= 100.0f;
@@ -94,7 +94,8 @@ void Game::Loop() {
 	for( int i=0; i<w.renObjs.size(); i++ ) {
 		id = w.renObjs[i]->instance_id;
 		ind = w.renObjs[i]->index;
-		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
+		*((glm::vec4 *) &ii.position) = *((glm::vec4 *) &w.cloud->points[ind]);
+//		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
 		ii.depthMask_in = 1;
 		renderInfo[id].push_back(ii);
 	}
@@ -115,7 +116,8 @@ void Game::Loop() {
 	for( int i=1; i<w.selection.size(); i++ ) {
 		id = ((Renderable *)w.objects[w.selection[i]])->instance_id;
 		ind = w.objects[w.selection[i]]->index;
-		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
+		*((glm::vec4 *) &ii.position) = *((glm::vec4 *) &w.cloud->points[ind]);
+//		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
 		ii.depthMask_in = 1;
 		renderInfo[id].push_back(ii);
 	}

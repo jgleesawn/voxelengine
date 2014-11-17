@@ -22,7 +22,7 @@ int main( int argc, char* args[] ) {
 	}
 
 //	window = SDL_CreateWindow( "SDL Game", 100, 100, 640, 480, SDL_WINDOW_SHOWN );
-	window = SDL_CreateWindow( "SDL Game", 100, 100, 640, 640, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+	window = SDL_CreateWindow( "SDL Game", 100, 100, 640, 480, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 	if( window == nullptr ) {
 		logSDLError(std::cout, "CreateWindow");
 		SDL_Quit();

@@ -38,8 +38,8 @@ struct Inst {
 };
 
 struct InstInfo {
-	GLuint position[3];
-	GLuint depthMask_in;
+	GLfloat position[3];
+	GLfloat depthMask_in;
 };
 
 class GLmanager {
