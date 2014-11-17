@@ -1,6 +1,8 @@
 #include "game.h"
 
 Game::Game() {
+//glewExperimental fixed segfault on glVertexAttribDivisor for GL2.0(on my laptop)
+	glewExperimental = GL_TRUE;
 	glewInit();
 	if( GLEW_ARB_instanced_arrays )
 		std::cout << "instanced arrays" << std::endl;
@@ -22,7 +24,7 @@ Game::Game() {
 for( int j=0; j<1; j++ ) {
 	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
 
-	for( int i=0; i<10000; i++ ) {
+	for( int i=0; i<50000; i++ ) {
 		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
 		pos *= 200.0f;
 		pos -= 100.0f;
