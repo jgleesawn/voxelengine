@@ -9,7 +9,7 @@
 #include "objmodel.h"
 
 //Currently shoves all objects within the model into a single vertex/index combination.
-objModel loadObjFile(const std::string &);
+ObjModel loadObjFile(const std::string &);
 
 
 

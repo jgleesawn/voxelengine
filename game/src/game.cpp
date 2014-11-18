@@ -24,7 +24,7 @@ Game::Game() {
 for( int j=0; j<1; j++ ) {
 	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
 
-	for( int i=0; i<50000; i++ ) {
+	for( int i=0; i<50; i++ ) {
 		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
 		pos *= 200.0f;
 		pos -= 100.0f;
@@ -40,6 +40,10 @@ for( int j=0; j<1; j++ ) {
 		w.makeRenderable(ro->index);
 	}
 }
+	w.terrain.glm = &glm;
+	w.terrain.chunk_size = 1.0f;
+	w.terrain.pos = w.objects[w.camera]->position;
+	w.terrain.GenerateTerrain();
 
 	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
 	interface.m[&World::MoveFocusLeft] = SDL_SCANCODE_A;
@@ -72,8 +76,8 @@ void Game::Loop() {
 //	std::cout << w.ot.UR[0] << std::endl;
 	interface.Loop(&w);
 
-	w.Wiggle();
-	w.update();
+//	w.Wiggle();
+//	w.update();
 
 
 	std::vector<float> k_sqr;
@@ -126,6 +130,24 @@ void Game::Loop() {
 
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
+	}
+
+
+	renderInfo.clear();
+	for( int i=0; i<terrain_size; i++ ) {
+		for( int j=0; j<terrain_size; j++ ) {
+			for( int k=0; k<terrain_size; k++ ) {
+				id = w.terrain.space[i][j][k]->instance_id;
+				ii.position[0] = w.terrain.space[i][j][k]->position.x;
+				ii.position[1] = w.terrain.space[i][j][k]->position.y;
+				ii.position[2] = w.terrain.space[i][j][k]->position.z;
+				ii.depthMask_in = 1.0f;
+				renderInfo[id].push_back(ii);
+			}
+		}
+	}	
+	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
+		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
 
 //FIX THIS, relying on camera being Object[0]

@@ -10,6 +10,7 @@
 
 #include "object/object.h"
 #include "object/renderable.h"
+#include "terrain.h"
 
 class exposedOPCS : public pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> {
 public:
@@ -26,6 +27,7 @@ public:
 
 	std::vector<Object *> objects;
 	std::vector<Renderable *> renObjs;
+	Terrain terrain;
 
 	std::vector<int> selection;
 

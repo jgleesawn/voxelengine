@@ -1,10 +1,10 @@
 #include "objloader.h"
 
-objModel loadObjFile(const std::string & fileName) {
+ObjModel loadObjFile(const std::string & fileName) {
 	std::fstream fs(fileName);
 	if( fs.is_open() );
 
-	objModel om;	
+	ObjModel om;	
 
 	std::string line;
 	std::stringstream sstr;
@@ -24,28 +24,28 @@ objModel loadObjFile(const std::string & fileName) {
 		sstr >> qualifier;
 		if( qualifier == "o" ) {
 			sstr >> line;
-//			indOffset = om.vertices.size();
+//			indOffset = om.vbo.size();
 //Obj format has indoffset built in.
 		} else if ( qualifier == "v" ) {
 			sstr >> vertex[0] >> vertex[1] >> vertex[2];
-			om.vertices.push_back(vertex);
+			om.vbo.push_back(vertex);
 		} else if ( qualifier == "f" ) {
 			sstr >> faceInd[0] >> faceInd[1] >> faceInd[2] >> faceInd[3];
 /*
 			for( int i=4; i>=2; i-- )
-				om.indices.push_back(faceInd[i%4] - 1);
+				om.ibo.push_back(faceInd[i%4] - 1);
 			for( int i=2; i>=0; i-- )
-				om.indices.push_back(faceInd[i] - 1);
+				om.ibo.push_back(faceInd[i] - 1);
 */
 
 			for( int i=0; i<3; i++ )
-				om.indices.push_back(faceInd[i] - 1);
+				om.ibo.push_back(faceInd[i] - 1);
 			for( int i=2; i<5; i++ )
-				om.indices.push_back(faceInd[i%4] - 1);
+				om.ibo.push_back(faceInd[i%4] - 1);
 
 /*
 			for( int i=0; i<3; i++ )
-				om.indices.push_back(faceInd[i]-1);
+				om.ibo.push_back(faceInd[i]-1);
 */
 		} else {
 		}

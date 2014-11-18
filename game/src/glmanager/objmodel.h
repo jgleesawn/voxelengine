@@ -4,9 +4,9 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-struct objModel {
-	std::vector<glm::vec4> vertices;
-	std::vector<int> indices;
+struct ObjModel {
+	std::vector<glm::vec4> vbo;
+	std::vector<int> ibo;
 };
 
 

@@ -49,10 +49,10 @@ public:
 
 	GLmanager() {}
 	~GLmanager();
-	std::vector<gfxObj_t> Load(const std::vector< objModel > & vobj );//std::vector<std::vector<glm::vec4 > * > * vbos_in, std::vector< std::vector<int> * > * ibos_in);
+	std::vector<gfxObj_t> Load(const std::vector< ObjModel > & vobj );//std::vector<std::vector<glm::vec4 > * > * vbos_in, std::vector< std::vector<int> * > * ibos_in);
 	std::vector<gfxObj_t> Load(const std::vector< std::string > & );
-	int LoadInst(const objModel &);
-	int LoadInst(const std::string &);
+	int LoadInst(const ObjModel &, size_t = 100000);
+	int LoadInst(const std::string &, size_t = 100000);
 
 	void Update(gfxObj_t, std::vector<float>);
 
