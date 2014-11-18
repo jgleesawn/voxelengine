@@ -53,35 +53,35 @@ void World::MoveObject( Object * obj, const glm::vec4 & offset ) {
 }
 
 void World::MoveFocusForward() {
-	*(glm::vec4 *)&(cloud->points[focus]) += objects[focus]->getForward();
+	*(glm::vec4 *)&(cloud->points[focus]) += 0.5f*objects[focus]->getForward();
 }
 
 void World::MoveFocusRight() {
-	*(glm::vec4 *)&(cloud->points[focus]) += objects[focus]->getRight();
+	*(glm::vec4 *)&(cloud->points[focus]) += 0.5f*objects[focus]->getRight();
 }
 
 void World::MoveFocusLeft() {
-	*(glm::vec4 *)&(cloud->points[focus]) -= objects[focus]->getRight();
+	*(glm::vec4 *)&(cloud->points[focus]) -= 0.5f*objects[focus]->getRight();
 }
 
 void World::MoveFocusBack() {
-	*(glm::vec4 *)&(cloud->points[focus]) -= objects[focus]->getForward();
+	*(glm::vec4 *)&(cloud->points[focus]) -= 0.5f*objects[focus]->getForward();
 }
 
 void World::RotFocusRight() {
-	objects[focus]->rotY(-.1);
+	objects[focus]->rotY(-.05);
 }
 
 void World::RotFocusLeft() {
-	objects[focus]->rotY(.1);
+	objects[focus]->rotY(.05);
 }
 
 void World::RotFocusUp() {
-	objects[focus]->rotX(.1);
+	objects[focus]->rotX(.05);
 }
 
 void World::RotFocusDown() {
-	objects[focus]->rotX(-.1);
+	objects[focus]->rotX(-.05);
 }
 
 void World::focusCamera() {

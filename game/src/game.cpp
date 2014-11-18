@@ -20,6 +20,7 @@ Game::Game() {
 
 	glEnable(GL_DEPTH_TEST);
 //	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 
 for( int j=0; j<1; j++ ) {
 	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
@@ -41,9 +42,9 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 1.0f;
+	w.terrain.chunk_size = 3.1415;
 	w.terrain.pos = w.objects[w.camera]->position;
-	w.terrain.pos -= .5f;
+	w.terrain.pos.y -= .5f;
 	w.terrain.GenerateTerrain();
 
 //	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
@@ -142,10 +143,16 @@ void Game::Loop() {
 	for( int i=0; i<terrain_size; i++ ) {
 		for( int j=0; j<terrain_size; j++ ) {
 			for( int k=0; k<terrain_size; k++ ) {
+				glm::vec4 tpos = w.terrain.pos;
 				id = w.terrain.space[i][j][k]->instance_id;
+				ii.position[0] = w.terrain.pos.x + w.terrain.chunk_size*(float)j;
+				ii.position[1] = w.terrain.pos.y + w.terrain.chunk_size*(float)k;
+				ii.position[2] = w.terrain.pos.z + w.terrain.chunk_size*(float)i;
+/*
 				ii.position[0] = w.terrain.space[i][j][k]->position.x;
 				ii.position[1] = w.terrain.space[i][j][k]->position.y;
 				ii.position[2] = w.terrain.space[i][j][k]->position.z;
+*/
 				ii.depthMask_in = 1.0f;
 				renderInfo[id].push_back(ii);
 			}

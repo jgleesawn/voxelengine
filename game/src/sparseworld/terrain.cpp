@@ -2,8 +2,10 @@
 
 #include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
-//	return 3*glm::sin(y*2) + 3*glm::sin(x*2) + 3*glm::sin(z*2); //+ glm::cos(z);
-	return -y + glm::sin(z);
+	return glm::sin(y) + glm::sin(x) + glm::sin(z); //+ glm::cos(z);
+//	return -y + glm::sin(z);
+//	return x - y + glm::sin(z);
+//	return glm::sin(z);
 //	return -y;
 }
 
@@ -32,8 +34,9 @@ void Terrain::GenerateTerrain() {
 				std::cerr << ".";
 //				std::cout << k+j*terrain_size+i*terrain_size*terrain_size << " ";
 				pos_offset = pos;
+				pos_offset = glm::vec4(0.0f);
 				pos_offset += glm::vec4((i-terrain_size/2)*chunk_size, (j-terrain_size/2)*chunk_size, (k-terrain_size/2)*chunk_size, 0.0f);
-				printv(pos_offset);
+//				printv(pos_offset);
 				if( !space[i][j][k] ) {
 					ObjModel * obj_model = g.generate(pos_offset, chunk_size, plane);
 					space[i][j][k] = new Renderable(pos_offset, glm->LoadInst(*obj_model,1));

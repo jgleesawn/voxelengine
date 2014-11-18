@@ -1,23 +1,25 @@
 #include "generator.h"
 
-#define vbopos i+j*32+k*32*32
+#define NPD 32
+#define DDD 33
+#define vbopos i+j*NPD+k*NPD*NPD
 
 //order so x and z are contiguous, will lend for more contiguous data.
 ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densityFunc df) {
 	voxelpolymacro
-	float densities[33*33*33];
+	float densities[DDD*DDD*DDD];
 	ObjModel * mesh = new ObjModel;
 
-	mesh->vbo.reserve(33*33*33);
-	mesh->vbo.resize(33*33*33);
+	mesh->vbo.reserve(DDD*DDD*DDD);
+	mesh->vbo.resize(DDD*DDD*DDD);
 
 	int ibopos = 0;
 	
-	float ss = size/32.0f;
-	for( int i=0; i<33; i++ ) {
-	for( int j=0; j<33; j++ ) {
-	for( int k=0; k<33; k++ ) {
-		densities[i+j*33+k*33*33] = df(llb.x+j*ss, llb.y+k*ss, llb.z+i*ss);
+	float ss = size/(float)NPD;
+	for( int i=0; i<DDD; i++ ) {
+	for( int j=0; j<DDD; j++ ) {
+	for( int k=0; k<DDD; k++ ) {
+		densities[i+j*DDD+k*DDD*DDD] = df(llb.x+j*ss, llb.y+k*ss, llb.z+i*ss);
 	}
 	}
 	}
@@ -29,9 +31,9 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 	int edge, starting_vertex, dpos, end_offset;
 	int vboind;
 	float d1,d2;
-	for( int i=0; i<32; i++ ) {
-	for( int j=0; j<32; j++ ) {
-	for( int k=0; k<32; k++ ) {
+	for( int i=0; i<NPD; i++ ) {
+	for( int j=0; j<NPD; j++ ) {
+	for( int k=0; k<NPD; k++ ) {
 		ind = 0;
 		//v7|v6|v5|v4|v3|v2|v1|v0
 		for( int l=0; l<8; l++ ) {
@@ -42,7 +44,7 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 			zoff = l>>2;
 			yoff = (i&1) ^ ((i>>1)&1);
 			xoff = (i>>1)&1;
-			ind |= (densities[i + j*33 + k*33*33 + zoff + xoff*33 + yoff*33*33] >= 0.0f ) << l;
+			ind |= (densities[i + j*DDD + k*DDD*DDD + zoff + xoff*DDD + yoff*DDD*DDD] >= 0.0f ) << l;
 		}
 		if( ind == 0 || ind == 255 )
 			continue;
@@ -65,7 +67,7 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 //					if( starting_vertex%4 )
 //						starting_vertex++;
 				}
-				dpos = i+j*33+k*33*33;
+				dpos = i+j*DDD+k*DDD*DDD;
 				glm::vec4 starting_voffset(0.0f);
 				switch(starting_vertex) {
 				case 0:
@@ -96,25 +98,25 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				starting_voffset -= starting_voffset*v;
 
 				int starting_offset = round(starting_voffset.z);
-				starting_offset += round(starting_voffset.x)*33;
-				starting_offset += round(starting_voffset.y)*33*33;
+				starting_offset += round(starting_voffset.x)*DDD;
+				starting_offset += round(starting_voffset.y)*DDD*DDD;
 
 				end_offset = round(v.z);
-				end_offset += round(v.x)*33;
-				end_offset += round(v.y)*33*33;
+				end_offset += round(v.x)*DDD;
+				end_offset += round(v.y)*DDD*DDD;
 
 				d1 = densities[dpos + starting_offset];
 				d2 = densities[dpos + starting_offset + end_offset];
 
 				int vbo_offset = round(starting_voffset.z);
-				vbo_offset += round(starting_voffset.x)*32;
-				vbo_offset += round(starting_voffset.y)*32*32;
+				vbo_offset += round(starting_voffset.x)*NPD;
+				vbo_offset += round(starting_voffset.y)*NPD*NPD;
 
 				vboind = vbopos + vbo_offset;
 
 				int z = i + round(starting_voffset.z);
-				int x = j*32 + round(starting_voffset.x)*32;
-				int y = k*32*32 + round(starting_voffset.y)*32*32;
+				int x = j*NPD + round(starting_voffset.x)*NPD;
+				int y = k*NPD*NPD + round(starting_voffset.y)*NPD*NPD;
 				
 				if( vboind >= mesh->vbo.capacity() ) {
 					printv(v);
@@ -141,5 +143,6 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 }
 
 #undef vbopos
-
+#undef NPD
+#undef DDD 
 	
