@@ -8,6 +8,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include "util/glm_util.h"
+
 class Object {
 public:
 	int index;
@@ -32,10 +34,5 @@ public:
 	void rotY(float);
 	void rotX(float);
 };
-
-void printv(const glm::vec3 &);
-void printv(const glm::vec4 &);
-void printq(const glm::quat &);
-void printm(const glm::mat4 &);
 
 #endif

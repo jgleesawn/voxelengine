@@ -19,7 +19,7 @@ Game::Game() {
 	w.camera = w.addObject(view, view->position);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+//	glEnable(GL_CULL_FACE);
 
 for( int j=0; j<1; j++ ) {
 	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
@@ -41,8 +41,9 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 0.5f;
+	w.terrain.chunk_size = 1.0f;
 	w.terrain.pos = w.objects[w.camera]->position;
+	w.terrain.pos -= .5f;
 	w.terrain.GenerateTerrain();
 
 //	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
@@ -151,6 +152,7 @@ void Game::Loop() {
 		}
 	}	
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
+//		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
 

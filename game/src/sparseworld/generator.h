@@ -8,6 +8,8 @@
 #include "glmanager/objmodel.h"
 #include "polygons.h"
 
+#include "util/glm_util.h"
+
 class Generator {
 	typedef float(*densityFunc)(const float &, const float &, const float &);
 public:

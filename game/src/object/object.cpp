@@ -21,29 +21,6 @@ void Object::rotParallel(float rad) {
 	std::cout << std::endl;
 }
 */
-void printv(const glm::vec3 & v) {
-	for( int i=0; i<3; i++ )
-		std::cout << v[i] << " ";
-	std::cout << std::endl;
-}
-void printv(const glm::vec4 & v) {
-	for( int i=0; i<4; i++ )
-		std::cout << v[i] << " ";
-	std::cout << std::endl;
-}
-void printq(const glm::quat & q) {
-	for( int i=0; i<4; i++ )
-		std::cout << q[i] << " ";
-	std::cout << std::endl;
-}
-void printm( const glm::mat4 & m) {
-	for( int i=0; i<4; i++ ) {
-		for( int j=0; j<4; j++ )
-			std::cout << m[i][j] << " ";
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
-}
 /*
 void Object::rotPerpendicular(float rad) {
 	glm::vec3 v = verticle;
