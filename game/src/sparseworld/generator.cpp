@@ -4,8 +4,11 @@
 #define DDD 33
 #define vbopos i+j*NPD+k*NPD*NPD
 
+#include <map>
+
 //order so x and z are contiguous, will lend for more contiguous data.
 ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densityFunc df) {
+	std::map<int, int> counter;
 	voxelpolymacro
 	float densities[DDD*DDD*DDD];
 	ObjModel * mesh = new ObjModel;
@@ -19,7 +22,7 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 	for( int i=0; i<DDD; i++ ) {
 	for( int j=0; j<DDD; j++ ) {
 	for( int k=0; k<DDD; k++ ) {
-		densities[i+j*DDD+k*DDD*DDD] = df(llb.x+j*ss, llb.y+k*ss, llb.z+i*ss);
+		densities[i+j*DDD+k*DDD*DDD] = df(llb.x+((float)j)*ss, llb.y+((float)k)*ss, llb.z+((float)i)*ss);
 	}
 	}
 	}
@@ -44,10 +47,13 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 			zoff = l>>2;
 			yoff = (i&1) ^ ((i>>1)&1);
 			xoff = (i>>1)&1;
-			ind |= (densities[i + j*DDD + k*DDD*DDD + zoff + xoff*DDD + yoff*DDD*DDD] >= 0.0f ) << l;
+			ind |= (densities[i + j*DDD + k*DDD*DDD + zoff + xoff*DDD + yoff*DDD*DDD] > 0.0f ) << l;
 		}
-		if( ind == 0 || ind == 255 )
-			continue;
+//DEBUGGING
+		counter[ind]++;
+
+//		if( ind == 0 || ind == 255 )
+//			continue;
 		for( int l=0; l<voxelpoly.numPolys[ind]; l++ ) {
 			for( int m=0; m<3; m++ ) {
 				edge = voxelpoly.polyInd[ind*5+l].data[m];
@@ -67,6 +73,7 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 //					if( starting_vertex%4 )
 //						starting_vertex++;
 				}
+
 				dpos = i+j*DDD+k*DDD*DDD;
 				glm::vec4 starting_voffset(0.0f);
 				switch(starting_vertex) {
@@ -118,16 +125,16 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				int x = j*NPD + round(starting_voffset.x)*NPD;
 				int y = k*NPD*NPD + round(starting_voffset.y)*NPD*NPD;
 				
-				if( vboind >= mesh->vbo.capacity() ) {
-					printv(v);
-					printv(starting_voffset);
-					std::cout << x << " " << y << " " << z << std::endl;
-					std::cout << vboind << " ind out of bounds " << mesh->vbo.capacity() << std::endl;
-					std::cout << vbopos << " pos out of bounds " << mesh->vbo.capacity() << std::endl;
+//				if( vboind >= mesh->vbo.capacity() ) {
+//					printv(v);
+//					printv(starting_voffset);
+//					std::cout << x << " " << y << " " << z << std::endl;
+//					std::cout << vboind << " ind out of bounds " << mesh->vbo.capacity() << std::endl;
+// 					std::cout << vbopos << " pos out of bounds " << mesh->vbo.capacity() << std::endl;
 //					for( int n=0; n<m; n++ ) 
 //						mesh->ibo.pop_back();
 //					break;
-				}
+//				}
 				float density_ratio = fabs(d1)/(fabs(d1)+fabs(d2));
 			
 				mesh->vbo[vboind] = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f) + llb;
@@ -138,6 +145,11 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 		}
 	}
 	}
+	}
+	std::map<int, int>::iterator it;
+	for( it = counter.begin(); it!=counter.end(); it++ ) {
+		if( it->first != 0 && it->first != 15 && it->first != 240 && it->first != 255 )
+			std::cout << it->first << " " << it->second << std::endl;
 	}
 	return mesh;
 }

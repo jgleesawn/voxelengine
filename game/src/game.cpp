@@ -42,7 +42,7 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 3.1415;
+	w.terrain.chunk_size = 3.1415/5.0f;
 	w.terrain.pos = w.objects[w.camera]->position;
 	w.terrain.pos.y -= .5f;
 	w.terrain.GenerateTerrain();

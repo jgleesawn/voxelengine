@@ -2,11 +2,12 @@
 
 #include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
-	return glm::sin(y) + glm::sin(x) + glm::sin(z); //+ glm::cos(z);
+//	return glm::sin(y) + glm::sin(x) + glm::sin(z); //+ glm::cos(z);
 //	return -y + glm::sin(z);
 //	return x - y + glm::sin(z);
 //	return glm::sin(z);
 //	return -y;
+	return -z;
 }
 
 Terrain::Terrain() {
