@@ -41,17 +41,21 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 1.0f;
+	w.terrain.chunk_size = 0.5f;
 	w.terrain.pos = w.objects[w.camera]->position;
 	w.terrain.GenerateTerrain();
 
-	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
+//	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
+	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_W;
 	interface.m[&World::MoveFocusLeft] = SDL_SCANCODE_A;
 	interface.m[&World::MoveFocusRight] = SDL_SCANCODE_D;
-	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_S;
+//	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_S;
+	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_S;
 
-	interface.m[&World::RotFocusRight] = SDL_SCANCODE_RIGHT;
-	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_LEFT;
+//	interface.m[&World::RotFocusRight] = SDL_SCANCODE_RIGHT;
+//	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_LEFT;
+	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_RIGHT;
+	interface.m[&World::RotFocusRight] = SDL_SCANCODE_LEFT;
 	interface.m[&World::RotFocusUp] = SDL_SCANCODE_UP;
 	interface.m[&World::RotFocusDown] = SDL_SCANCODE_DOWN;
 

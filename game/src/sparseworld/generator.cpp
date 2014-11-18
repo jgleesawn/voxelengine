@@ -108,12 +108,12 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				int z = vboind %32;
 				int x = (vboind>>5) %32;
 				int y = (vboind>>10) %32;	
-				if( vboind > mesh->vbo.capacity() ) {
+				if( vboind >= mesh->vbo.capacity() ) {
 //					std::cout << vboind << " ind out of bounds " << mesh->vbo.capacity() << std::endl;
 //					std::cout << vbopos << " pos out of bounds " << mesh->vbo.capacity() << std::endl;
-//					for( int n=0; n<m; n++ ) 
-//						mesh->ibo.pop_back();
-//					break;
+					for( int n=0; n<m; n++ ) 
+						mesh->ibo.pop_back();
+					break;
 				}
 				mesh->vbo[vboind] = ((float)(fabs(d1)/(fabs(d1)+fabs(d2)))*v)+glm::vec4((float)(j+x)*ss, (float)(k+y)*ss, (float)(i+z)*ss, 0.0f)+llb;
 				mesh->ibo.push_back(vboind);

@@ -1,6 +1,8 @@
 #include "terrain.h"
 
+#include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
+	return glm::sin(y) + glm::sin(x) + glm::sin(z); //+ glm::cos(z);
 	return -y;
 }
 
