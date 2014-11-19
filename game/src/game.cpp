@@ -42,9 +42,12 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 2.0f; //3.1415/5.0f;
-	w.terrain.pos = w.objects[w.camera]->position;
-	w.terrain.pos.y -= .5f;
+	w.terrain.chunk_size = 2*3.1415f;
+//	w.terrain.pos = w.objects[w.camera]->position;
+	w.terrain.pos = glm::vec4(0.0f);
+	w.terrain.pos.x -= 0.134815;
+	w.terrain.pos.y -= 0.179283;
+	w.terrain.pos.z -= 2*3.1415f; //0.122384;
 	w.terrain.GenerateTerrain();
 
 //	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
@@ -145,9 +148,10 @@ void Game::Loop() {
 			for( int k=0; k<terrain_size; k++ ) {
 				glm::vec4 tpos = w.terrain.pos;
 				id = w.terrain.space[i][j][k]->instance_id;
-				ii.position[0] = w.terrain.pos.x + w.terrain.chunk_size*(float)j;
-				ii.position[1] = w.terrain.pos.y + w.terrain.chunk_size*(float)k;
-				ii.position[2] = w.terrain.pos.z + w.terrain.chunk_size*(float)i;
+//I do not know why the steps size must be chunk_size/2.0f, otherwise there is a gap.
+				ii.position[0] = w.terrain.pos.x + w.terrain.chunk_size*(float)i/2.0f;
+				ii.position[1] = w.terrain.pos.y + w.terrain.chunk_size*(float)j/2.0f;
+				ii.position[2] = w.terrain.pos.z + w.terrain.chunk_size*(float)k/2.0f;
 /*
 				ii.position[0] = w.terrain.space[i][j][k]->position.x;
 				ii.position[1] = w.terrain.space[i][j][k]->position.y;

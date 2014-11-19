@@ -6,8 +6,16 @@ float plane( const float & x, const float & y, const float & z ) {
 //	return -y + glm::sin(z);
 //	return x - y + glm::sin(z);
 //	return glm::sin(z);
+//	return glm::sin(x);
+//	return glm::sin(y);
+//	return glm::sin(x) + glm::sin(z);
+	return glm::sin(y)-z;
+//	return -x;
+//	return -z;
+//	return -x;
 //	return -y;
-	return -((z<1 && z>-1)*2 - 1)*z;
+//	return -((z<1 && z>-1)*2 - 1)*z;
+//	return -z - y;
 }
 
 Terrain::Terrain() {
@@ -33,13 +41,12 @@ void Terrain::GenerateTerrain() {
 		for( int j=0; j<terrain_size; j++ ) {
 			for( int k=0; k<terrain_size; k++ ) {
 				std::cerr << ".";
-//				pos_offset = pos;
-				pos_offset = glm::vec4(0.0f);
-				pos_offset.y -= .5;
-				pos_offset.z -= .5;
+				pos_offset = pos;
 				pos_offset.w = 1.0f;
-				pos_offset += glm::vec4((i-terrain_size/2), (j-terrain_size/2), (k-terrain_size/2), 0.0f);
-				printv(pos_offset);
+//				pos_offset += glm::vec4((j-terrain_size/2)*chunk_size, (k-terrain_size/2)*chunk_size, (i-terrain_size/2)*chunk_size, 0.0f);
+//				pos_offset += glm::vec4((i-terrain_size/2)*chunk_size, (j-terrain_size/2)*chunk_size, (k-terrain_size/2)*chunk_size, 0.0f);
+				pos_offset += glm::vec4(i*chunk_size, j*chunk_size, k*chunk_size, 0.0f);
+//				printv(pos_offset);
 				if( !space[i][j][k] ) {
 					ObjModel * obj_model = g.generate(pos_offset, chunk_size, plane);
 					space[i][j][k] = new Renderable(pos_offset, glm->LoadInst(*obj_model,1));
