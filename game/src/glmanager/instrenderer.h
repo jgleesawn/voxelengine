@@ -29,6 +29,8 @@ public:
 	void RenderInst(const Inst &, const std::vector<InstInfo> &, const glm::vec4 &, const float &);
 	void WireframeInst(const Inst &, const std::vector<InstInfo> &, const glm::vec4 &, const float &);
 
+	void DebugGrid();
+
 //	virutal void Render(Renderable *, const glm::vec4 &);
 //	virtual void Wireframe(Renderable *, const glm::vec4 &);
 

@@ -42,7 +42,7 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 3.1415/5.0f;
+	w.terrain.chunk_size = 2.0f; //3.1415/5.0f;
 	w.terrain.pos = w.objects[w.camera]->position;
 	w.terrain.pos.y -= .5f;
 	w.terrain.GenerateTerrain();
@@ -162,6 +162,7 @@ void Game::Loop() {
 //		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
+	ren->DebugGrid();
 
 //FIX THIS, relying on camera being Object[0]
 //	if( w.focus ) {

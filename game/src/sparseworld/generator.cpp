@@ -116,28 +116,14 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				d2 = densities[dpos + starting_offset + end_offset];
 
 				int vbo_offset = round(starting_voffset.z);
-				vbo_offset += round(starting_voffset.x)*NPD;
-				vbo_offset += round(starting_voffset.y)*NPD*NPD;
+				vbo_offset += round(starting_voffset.x)*DDD;
+				vbo_offset += round(starting_voffset.y)*DDD*DDD;
 
-				vboind = vbopos + vbo_offset;
+//				vboind = vbopos + vbo_offset;
+				vboind = dpos + vbo_offset;
 
-				int z = i + round(starting_voffset.z);
-				int x = j*NPD + round(starting_voffset.x)*NPD;
-				int y = k*NPD*NPD + round(starting_voffset.y)*NPD*NPD;
-				
-//				if( vboind >= mesh->vbo.capacity() ) {
-//					printv(v);
-//					printv(starting_voffset);
-//					std::cout << x << " " << y << " " << z << std::endl;
-//					std::cout << vboind << " ind out of bounds " << mesh->vbo.capacity() << std::endl;
-// 					std::cout << vbopos << " pos out of bounds " << mesh->vbo.capacity() << std::endl;
-//					for( int n=0; n<m; n++ ) 
-//						mesh->ibo.pop_back();
-//					break;
-//				}
 				float density_ratio = fabs(d1)/(fabs(d1)+fabs(d2));
-			
-				mesh->vbo[vboind] = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f) + llb;
+				mesh->vbo[vboind] = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f);// + llb;
 //				mesh->vbo[vboind] = (density_ratio*v)+glm::vec4((float)(j+x)*ss, (float)(k+y)*ss, (float)(i+z)*ss, 0.0f)+llb;
 //				mesh->vbo[vboind] = (density_ratio*v)+glm::vec4((float)(x)*ss, (float)(y)*ss, (float)(z)*ss, 0.0f)+llb;
 				mesh->ibo.push_back(vboind);
@@ -151,6 +137,7 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 		if( it->first != 0 && it->first != 15 && it->first != 240 && it->first != 255 )
 			std::cout << it->first << " " << it->second << std::endl;
 	}
+//	std::cout << "indices for " << llb.x << " " << llb.y << " " << llb.z << ": " << mesh->ibo.size() << std::endl;
 	return mesh;
 }
 

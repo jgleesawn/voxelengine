@@ -100,4 +100,79 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	glBindVertexArray(0);
 }
 
+void InstRenderer::DebugGrid() {
+	glUseProgram(theProgram);
+	glUniform1f(uvar[1], 1.0f);
 
+	glUniform4f(uvar[5], 0.0f, 0.0f, 1.0f, 1.0f);
+
+	glm::vec4 vbo[100][3][2];
+	for( int i=0; i<100; i++ ) {
+		for( int j=0; j<3; j++ ) {
+			vbo[i][j][0] = glm::vec4(0.0f);
+			vbo[i][j][1] = glm::vec4(0.0f);
+			int prev = (j+2)%3;
+			int next = (j+1)%3;
+			vbo[i][j][0][j] = 100.0f;
+			vbo[i][j][1][j] = -100.0f;
+			vbo[i][j][0][prev] = i/10;
+			vbo[i][j][1][prev] = i/10;
+			vbo[i][j][0][next] = i%10;
+			vbo[i][j][1][next] = i%10;
+		}
+	}
+	int ibo[100][3][2];
+	for( int i=0; i<100; i++ ) {
+		for( int j=0; j<3; j++ ) {
+			ibo[i][j][1] = j*2 + i*3;
+			ibo[i][j][0] = 1 + j*2 + i*3;
+		}
+	}
+
+	GLuint tmpVBO;
+	glGenBuffers(1, &tmpVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, tmpVBO);
+	glBufferData(GL_ARRAY_BUFFER, 600*sizeof(glm::vec4), vbo, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	GLuint tmpIBO;
+	glGenBuffers(1, &tmpIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tmpIBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 600*sizeof(int), ibo, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glm::vec4 pos(0.0f);
+	pos.w = 1.0f;
+	GLuint tmpInstBO;
+	glGenBuffers(1, &tmpInstBO);
+	glBindBuffer(GL_ARRAY_BUFFER, tmpInstBO);
+	glBufferData(GL_ARRAY_BUFFER, 1*sizeof(glm::vec4), &pos, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	GLuint tmpVAO;
+	glGenVertexArrays(1, &tmpVAO);
+	glBindVertexArray(tmpVAO);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glBindBuffer( GL_ARRAY_BUFFER, tmpVBO );
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
+	glBindBuffer( GL_ARRAY_BUFFER, tmpInstBO);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
+	glVertexAttribDivisor(0,0);
+	glVertexAttribDivisor(1,1);
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, tmpIBO);
+	glBindVertexArray(0);
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+
+	glFinish();
+	glBindVertexArray(tmpVAO);
+	glDrawElementsInstanced( GL_LINES, 600, GL_UNSIGNED_INT, (void*)0, 1 );
+	glBindVertexArray(0);
+
+	glDeleteBuffers(1, &tmpVBO);
+	glDeleteBuffers(1, &tmpIBO);
+	glDeleteBuffers(1, &tmpInstBO);
+	glDeleteVertexArrays(1, &tmpVAO);
+
+}
