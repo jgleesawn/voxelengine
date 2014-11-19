@@ -8,19 +8,8 @@
 
 //order so x and z are contiguous, will lend for more contiguous data.
 ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densityFunc df) {
-//	printv( llb );
-//	printv( size+llb );
-//	std::cout << std::endl;
-	std::map<int, int> counter;
+//	std::map<int, int> counter;
 	voxelpolymacro
-/*
-	for( int i=0; i<3; i++ )
-		std::cout << voxelpoly.polyInd[159*5].data[i] << " ";
-	std::cout << std::endl;
-	for( int i=0; i<3; i++ )
-		std::cout << voxelpoly.polyInd[159*5+1].data[i] << " ";
-	std::cout << std::endl;
-*/
 
 	float densities[DDD*DDD*DDD];
 	ObjModel * mesh = new ObjModel;
@@ -52,20 +41,13 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 		ind = 0;
 		//v7|v6|v5|v4|v3|v2|v1|v0
 		for( int n=0; n<8; n++ ) {
-//			zoff = n&1;
-//			yoff = (n>>1)&1;
-//			xoff = (n>>2)&1;
 //Mapping indices as described in the nvidia tutorial, and as I've written in my notes.
 			zoff = n>>2;
 			yoff = (n&1) ^ ((n>>1)&1);
 			xoff = (n>>1)&1;
 			ind |= (densities[i + j*DDD + k*DDD*DDD + zoff + xoff*DDD + yoff*DDD*DDD] > 0.0f ) << n;
 		}
-//DEBUGGING
-		counter[ind]++;
-
-//		if( ind == 0 || ind == 255 )
-//			continue;
+//		counter[ind]++;
 		for( int n=0; n<voxelpoly.numPolys[ind]; n++ ) {
 			for( int m=0; m<3; m++ ) {
 				edge = voxelpoly.polyInd[ind*5+n].data[m];
@@ -77,13 +59,9 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				} else if( edge %2 ) {
 					v.x = 1.0f; 
 					starting_vertex = edge;
-//					if( (starting_vertex-1)%4 )
-//						starting_vertex -= 3;
 				} else if( (edge+1)%2 ) {
 					v.y = 1.0f;
 					starting_vertex = edge;
-//					if( starting_vertex%4 )
-//						starting_vertex++;
 				}
 
 				dpos = i+j*DDD+k*DDD*DDD;
@@ -131,37 +109,13 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 				vbo_offset += round(starting_voffset.x)*DDD;
 				vbo_offset += round(starting_voffset.y)*DDD*DDD;
 
-//				vboind = vbopos + vbo_offset;
 				vboind = dpos + vbo_offset;
 
 				float density_ratio = fabs(d1)/(fabs(d1)+fabs(d2));
 
-//				bool exists = false;
-//				for( int o=0; o<3; o++ )
-//					if( mesh->vbo[vboind][o] )
-//						exists = true;
-//				glm::vec4 vbo_vert = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f) + llb;
-
 				glm::vec4 vbo_vert = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f); // + llb;
-//				if( !exists )
-					mesh->vbo[vboind] = vbo_vert;
-/*
-				else {
-					exists = false;
-					for( int o=0; o<3; o++ )
-						if( mesh->vbo[vboind][o] != vbo_vert[o] )
-							exists = true;
-					if( exists ) {
-						printv(mesh->vbo[vboind]);
-						printv(vbo_vert);
-						printv(llb);
-						std::cout << j << " " << k << " " << i << std::endl;
-						std::cout << std::endl;
-					}
-				}
-*/
-//				mesh->vbo[vboind] = (density_ratio*v)+glm::vec4((float)(j+x)*ss, (float)(k+y)*ss, (float)(i+z)*ss, 0.0f)+llb;
-//				mesh->vbo[vboind] = (density_ratio*v)+glm::vec4((float)(x)*ss, (float)(y)*ss, (float)(z)*ss, 0.0f)+llb;
+
+				mesh->vbo[vboind] = vbo_vert;
 				mesh->ibo.push_back(vboind);
 			}
 		}
@@ -175,15 +129,6 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 			std::cout << it->first << " " << it->second << std::endl;
 	}
 */
-//	std::cout << "indices for " << llb.x << " " << llb.y << " " << llb.z << ": " << mesh->ibo.size() << std::endl;
-//	std::cout << std::endl;
-//	if( mesh->ibo.size() ) {
-//		std::cout << "vertex: " << std::endl;
-//		for( int i=0; i<4; i++ )
-//			printv( mesh->vbo[mesh->ibo[0]] );
-//	}
-//	std::cout << std::endl;
-//	std::cout << "Vertex count: " << mesh->ibo.size() << std::endl;
 	return mesh;
 }
 
