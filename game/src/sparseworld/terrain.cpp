@@ -2,13 +2,19 @@
 
 #include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
+	glm::vec3 v(x,y,z);
+	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
+	return glm::dot(glm::vec3(1.0f, 1.0f, 1.0f), v);
+
+
+//	return glm::sin((x*x+y*y+z*z + 4)/30.0f);
 	return glm::sin(y/10.0f) + glm::sin(x/10.0f) + glm::sin(z/10.0f); //+ glm::cos(z);
 //	return -y + glm::sin(z);
 //	return x - y + glm::sin(z);
 //	return glm::sin(z);
 //	return glm::sin(x);
 //	return glm::sin(y);
-//	return glm::sin(x) + glm::sin(z);
+	return glm::sin(x) + glm::sin(z) - y;
 	return glm::sin(y)-z;
 //	return -x;
 //	return -z;
@@ -41,11 +47,11 @@ void Terrain::GenerateTerrain() {
 		for( int j=0; j<terrain_size; j++ ) {
 			for( int k=0; k<terrain_size; k++ ) {
 				std::cerr << ".";
-				pos_offset = pos;
+				pos_offset = alignment + pos;
 				pos_offset.w = 1.0f;
 //				pos_offset += glm::vec4((j-terrain_size/2)*chunk_size, (k-terrain_size/2)*chunk_size, (i-terrain_size/2)*chunk_size, 0.0f);
 //				pos_offset += glm::vec4((i-terrain_size/2)*chunk_size, (j-terrain_size/2)*chunk_size, (k-terrain_size/2)*chunk_size, 0.0f);
-				pos_offset += glm::vec4(i*chunk_size, j*chunk_size, k*chunk_size, 0.0f);
+				pos_offset += glm::vec4((float)i*chunk_size, (float)j*chunk_size, (float)k*chunk_size, 0.0f);
 //				printv(pos_offset);
 				if( !space[i][j][k] ) {
 					ObjModel * obj_model = g.generate(pos_offset, chunk_size, plane);
@@ -70,9 +76,9 @@ std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
 				if( space[i][j][k] ) {
 					id = space[i][j][k]->instance_id;
 					if( glm->gfxInst[id] ) {
-						ii.position[0] = alignment.x + pos.x + i * chunk_size/2.0f;
-						ii.position[1] = alignment.y + pos.y + j * chunk_size/2.0f;
-						ii.position[2] = alignment.z + pos.z + k * chunk_size/2.0f;
+						ii.position[0] = alignment.x + pos.x + i * chunk_size;
+						ii.position[1] = alignment.y + pos.y + j * chunk_size;
+						ii.position[2] = alignment.z + pos.z + k * chunk_size;
 						ii.depthMask_in = 1.0f;
 						renderInfo[id].push_back(ii);
 					}
@@ -83,15 +89,39 @@ std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
 	return renderInfo;
 }
 
+std::map<int, std::vector<InstInfo> > Terrain::getDebugRenderMap(bool selector) {
+	int ind;
+	std::map< int, std::vector<InstInfo> > renderInfo;
+	InstInfo ii;
+	for( int i=0; i<terrain_size; i++ ) {
+		for( int j=0; j<terrain_size; j++ ) {
+			for( int k=0; k<terrain_size; k++ ) {
+				if( (bool)space[i][j][k] ^ selector ) {
+					if( glm->gfxInst[debug_instance_id] ) {
+//chunk_size was divided by 2.0f
+						ii.position[0] = alignment.x + pos.x + i * chunk_size + chunk_size/2.0f;
+						ii.position[1] = alignment.y + pos.y + j * chunk_size + chunk_size/2.0f;
+						ii.position[2] = alignment.z + pos.z + k * chunk_size + chunk_size/2.0f;
+						ii.depthMask_in = chunk_size/2.0f;
+						renderInfo[debug_instance_id].push_back(ii);
+					}
+				}
+			}
+		}
+	}
+	return renderInfo;
+}
+
 void Terrain::MovePDim(int dim) {
 	bool x,y,z;
+	x = y = z = 0;
 	z = dim & 1;
 	y = (dim >> 1) & 1;
 	x = (dim >> 2) & 1;
 //RemoveInst, Delete, set to null
-	for( int i=0; i<1 + x*(terrain_size-1); i++ )
-		for( int j=0; j<1 + y*(terrain_size-1); j++ )
-			for( int k=0; k<1 + z*(terrain_size-1); k++ )
+	for( int i=0; i<1 + ((x+1)%2)*(terrain_size-1); i++ )
+		for( int j=0; j<1 + ((y+1)%2)*(terrain_size-1); j++ )
+			for( int k=0; k<1 + ((z+1)%2)*(terrain_size-1); k++ )
 				if( space[i][j][k] ) {
 					glm->RemoveInst(space[i][j][k]->instance_id);
 					delete space[i][j][k];
@@ -124,6 +154,7 @@ void Terrain::MovePDim(int dim) {
 
 void Terrain::MoveNDim(int dim) {
 	bool x,y,z;
+	x = y = z = 0;
 	z = dim & 1;
 	y = (dim >> 1) & 1;
 	x = (dim >> 2) & 1;
@@ -148,9 +179,9 @@ void Terrain::MoveNDim(int dim) {
 	pos.y -= chunk_size*(float)y;
 	pos.z -= chunk_size*(float)z;
 	glm::vec4 pos_offset(0.0f);
-	for( int i=0; i<1+x*(terrain_size-1); i++ )
-		for( int j=0; j<1+y*(terrain_size-1); j++ )
-			for( int k=0; k<1+z*(terrain_size-1); k++ ) {
+	for( int i=0; i<1+((x+1)%2)*(terrain_size-1); i++ )
+		for( int j=0; j<1+((y+1)%2)*(terrain_size-1); j++ )
+			for( int k=0; k<1+((z+1)%2)*(terrain_size-1); k++ ) {
 				pos_offset = alignment + pos + glm::vec4(i*chunk_size, j*chunk_size, k*chunk_size, 0.0f);
 				space[i][j][k] = NULL;
 				ObjModel * obj_model = g.generate(pos_offset, chunk_size, plane);
@@ -162,21 +193,49 @@ void Terrain::MoveNDim(int dim) {
 }
 
 void Terrain::Center(glm::vec4 position, glm::vec4 direction) {
-	glm::vec4 distal_point = position + direction * chunk_size * (terrain_size/2.0f);
-	glm::vec4 max = glm::max(position, distal_point);
-	glm::vec4 min = glm::min(position, distal_point);
-	if( max.x > alignment.x + pos.x + chunk_size * terrain_size )
+	if( position.x > alignment.x + pos.x + chunk_size*(terrain_size/2.0f + 1.0f) )
 		MovePDim(4);
-	if( min.x < alignment.x + pos.x + chunk_size)
+	if( position.x < alignment.x + pos.x + chunk_size*(terrain_size/2.0f - 1.0f) )
 		MoveNDim(4);
-	if( max.y > alignment.y + pos.y + chunk_size * terrain_size )
+
+	if( position.y > alignment.y + pos.y + chunk_size*(terrain_size/2.0f + 1.0f) )
 		MovePDim(2);
-	if( min.y < alignment.y + pos.y + chunk_size)
+	if( position.y < alignment.y + pos.y + chunk_size*(terrain_size/2.0f - 1.0f) )
 		MoveNDim(2);
-	if( max.z > alignment.z + pos.z + chunk_size * terrain_size )
+
+	if( position.z > alignment.z + pos.z + chunk_size*(terrain_size/2.0f + 1.0f) )
 		MovePDim(1);
-	if( min.z < alignment.z + pos.z + chunk_size)
+	if( position.z < alignment.z + pos.z + chunk_size*(terrain_size/2.0f - 1.0f) )
 		MoveNDim(1);
+
+/*
+	glm::vec4 distal_point = position + direction * chunk_size * (terrain_size/2.0f);
+	if( distal_point.x > alignment.x + pos.x + chunk_size * (terrain_size + 1.0f))
+		MovePDim(4);
+	if( distal_point.x < alignment.x + pos.x - chunk_size )
+		MoveNDim(4);
+	if( distal_point.y > alignment.y + pos.y + chunk_size * (terrain_size + 1.0f))
+		MovePDim(2);
+	if( distal_point.y < alignment.y + pos.y - chunk_size )
+		MoveNDim(2);
+	if( distal_point.z > alignment.z + pos.z + chunk_size * (terrain_size + 1.0f))
+		MovePDim(1);
+	if( distal_point.z < alignment.z + pos.z - chunk_size )
+		MoveNDim(1);
+
+	if( position.x < alignment.x + pos.x + chunk_size )
+		MoveNDim(4);
+	if( position.x > alignment.x + pos.x + chunk_size*(terrain_size - 1.0f) )
+		MovePDim(4);
+	if( position.y < alignment.y + pos.y + chunk_size )
+		MoveNDim(2);
+	if( position.y > alignment.y + pos.y + chunk_size*(terrain_size - 1.0f) )
+		MovePDim(2);
+	if( position.z < alignment.z + pos.z + chunk_size )
+		MoveNDim(1);
+	if( position.z > alignment.z + pos.z + chunk_size*(terrain_size - 1.0f) )
+		MovePDim(1);
+*/
 }
 
 

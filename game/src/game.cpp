@@ -42,15 +42,19 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
+	w.terrain.debug_instance_id = 0;
 //	w.terrain.chunk_size = 2*3.1415f;
-	w.terrain.chunk_size = 5*2*3.1415f;
+	w.terrain.chunk_size = 10*2*3.1415f;
 //	w.terrain.pos = w.objects[w.camera]->position;
 	w.terrain.alignment = glm::vec4(0.0f);
 	w.terrain.alignment.x -= 2*3.1415f;
 	w.terrain.alignment.y -= 2*3.1415f;
+//	w.terrain.alignment.y += w.terrain.chunk_size/2.0f;
+//	w.terrain.alignment.y -= w.terrain.chunk_size/2.0f;
 	w.terrain.alignment.z -= 2*3.1415f; //0.122384;
 	w.terrain.pos = glm::vec4(0.0f);
 	w.terrain.GenerateTerrain();
+	w.terrain.MoveNDim(2);
 
 //	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
 	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_W;
@@ -106,6 +110,7 @@ void Game::Loop() {
 	glm::vec4 dir = glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)*view->getRotMat();
 //	printv(dir);
 	w.terrain.Center( *vpos, dir );
+	std::cout << "Current Density: " << plane((*vpos)[0], (*vpos)[1], (*vpos)[2]) << std::endl;
 
 	int id, ind;
 	InstInfo ii;
@@ -142,6 +147,7 @@ void Game::Loop() {
 		renderInfo[id].push_back(ii);
 	}
 
+	llb = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
@@ -152,6 +158,22 @@ void Game::Loop() {
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 //		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
+	}
+
+	renderInfo.clear();
+	renderInfo = w.terrain.getDebugRenderMap();
+	llb = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
+		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
+	}
+
+//Second Debug Rendering while color is passed by uniform.
+//Usage coincides with note in terrain.h
+	renderInfo.clear();
+	renderInfo = w.terrain.getDebugRenderMap(true);
+	llb = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
+		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
 
 

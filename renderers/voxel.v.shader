@@ -17,15 +17,24 @@ uniform mat4 viewRotation;
 
 uniform mat4 Perspective;
 
+out float intensity;
+
 void main()
 {
 	vec4 vertexPos = vec4( 0.0f, 0.0f, 0.0f, 0.0f );
 
-	vertexPos.xyz = vertexCoord.xyz* position.w *resolution/2.0f;
+	vertexPos.xyz = vertexCoord.xyz* position.w *resolution;
 	vertexPos.xyz += position.xyz;
 //	vertexPos.xyz += resolution*position.xyz*256.0f;
 //	vertexPos.xyz += lowerLeftBound.xyz;
 	vertexPos.w = 1.0f;
 
 	gl_Position = ( vertexPos - viewOffset ) * (viewRotation * Perspective);
+
+//	vertexPos.xyz = normalize(gl_Position.xyz);
+//	intensity = dot(vertexPos.xyz, vec3(0.0f, 0.0f, -1.0f));
+	intensity = 50.0f;
+	intensity /= length(gl_Position.xyz);
+	if( intensity < 0.5f )
+		intensity = 0.5f;
 }

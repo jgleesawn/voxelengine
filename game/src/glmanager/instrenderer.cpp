@@ -79,13 +79,15 @@ void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & 
 	glBindVertexArray(0);
 }
 
+//USING LLB AS A UNIFORM COLOR AS A STOP-GAP MEASURE
+//Coincides with note in terrain.h
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
 void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo> & vii, const glm::vec4 & llb, const float & res ) {
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
-		
-	glUniform4f(uvar[5], 0.0f, 1.0f, 1.0f, 1.0f);
+
+	glUniform4f(uvar[5], llb[0], llb[1], llb[2], llb[3]); //0.0f, 1.0f, 1.0f, 1.0f);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
@@ -104,7 +106,7 @@ void InstRenderer::DebugGrid() {
 	glUseProgram(theProgram);
 	glUniform1f(uvar[1], 1.0f);
 
-	glUniform4f(uvar[5], 0.0f, 0.0f, 1.0f, 1.0f);
+	glUniform4f(uvar[5], 1.0f, 0.0f, 1.0f, 1.0f);
 
 	glm::vec4 vbo[100][3][2];
 	for( int i=0; i<100; i++ ) {
@@ -113,12 +115,12 @@ void InstRenderer::DebugGrid() {
 			vbo[i][j][1] = glm::vec4(0.0f);
 			int prev = (j+2)%3;
 			int next = (j+1)%3;
-			vbo[i][j][0][j] = 100.0f;
-			vbo[i][j][1][j] = -100.0f;
-			vbo[i][j][0][prev] = i/10;
-			vbo[i][j][1][prev] = i/10;
-			vbo[i][j][0][next] = i%10;
-			vbo[i][j][1][next] = i%10;
+			vbo[i][j][0][j] = 1000.0f;
+			vbo[i][j][1][j] = -1000.0f;
+			vbo[i][j][0][prev] = 10*((i-50)/10);
+			vbo[i][j][1][prev] = 10*((i-50)/10);
+			vbo[i][j][0][next] = 10*((i-50)%10);
+			vbo[i][j][1][next] = 10*((i-50)%10);
 		}
 	}
 	int ibo[100][3][2];
