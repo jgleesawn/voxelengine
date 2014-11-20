@@ -54,6 +54,8 @@ public:
 	int LoadInst(const ObjModel &, size_t = 100000);
 	int LoadInst(const std::string &, size_t = 100000);
 
+	void RemoveInst(int);
+
 	void Update(gfxObj_t, std::vector<float>);
 
 };

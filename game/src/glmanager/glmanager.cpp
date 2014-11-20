@@ -15,12 +15,14 @@ GLmanager::~GLmanager() {
 		gfxObjs.pop_back();
 	}
 	while( !gfxInst.empty() ) {
-		glDeleteBuffers(1, &gfxInst.back()->VBO);
-		glDeleteBuffers(1, &gfxInst.back()->IBO);
-		glDeleteBuffers(1, &gfxInst.back()->InstBO);
-		glDeleteVertexArrays(1, &gfxInst.back()->VAO);
-
-		delete gfxInst.back();
+		if( gfxInst.back() ) {
+			glDeleteBuffers(1, &gfxInst.back()->VBO);
+			glDeleteBuffers(1, &gfxInst.back()->IBO);
+			glDeleteBuffers(1, &gfxInst.back()->InstBO);
+			glDeleteVertexArrays(1, &gfxInst.back()->VAO);
+	
+			delete gfxInst.back();
+		}
 		gfxInst.pop_back();
 	}
 }
@@ -148,6 +150,17 @@ int GLmanager::LoadInst(const ObjModel & obj, size_t max_num_instances) {
 
 int GLmanager::LoadInst(const std::string & fileName, size_t max_num_instances ) {
 	return LoadInst(std::move(loadObjFile(fileName)), max_num_instances);
+}
+
+void GLmanager::RemoveInst(int instance_id) {
+	if( gfxInst[instance_id] ) {
+		glDeleteBuffers(1, &gfxInst[instance_id]->VBO);
+		glDeleteBuffers(1, &gfxInst[instance_id]->IBO);
+		glDeleteBuffers(1, &gfxInst[instance_id]->InstBO);
+		glDeleteVertexArrays(1, &gfxInst[instance_id]->VAO);
+		delete gfxInst[instance_id];
+		gfxInst[instance_id] = NULL;
+	}
 }
 
 

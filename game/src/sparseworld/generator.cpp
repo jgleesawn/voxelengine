@@ -129,6 +129,10 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 			std::cout << it->first << " " << it->second << std::endl;
 	}
 */
+	if( mesh->ibo.empty() ) {
+		delete mesh;
+		mesh = NULL;
+	}
 	return mesh;
 }
 

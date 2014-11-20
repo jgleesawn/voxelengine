@@ -42,12 +42,14 @@ for( int j=0; j<1; j++ ) {
 	}
 }
 	w.terrain.glm = &glm;
-	w.terrain.chunk_size = 2*3.1415f;
+//	w.terrain.chunk_size = 2*3.1415f;
+	w.terrain.chunk_size = 5*2*3.1415f;
 //	w.terrain.pos = w.objects[w.camera]->position;
+	w.terrain.alignment = glm::vec4(0.0f);
+	w.terrain.alignment.x -= 2*3.1415f;
+	w.terrain.alignment.y -= 2*3.1415f;
+	w.terrain.alignment.z -= 2*3.1415f; //0.122384;
 	w.terrain.pos = glm::vec4(0.0f);
-	w.terrain.pos.x -= 0.134815;
-	w.terrain.pos.y -= 0.179283;
-	w.terrain.pos.z -= 2*3.1415f; //0.122384;
 	w.terrain.GenerateTerrain();
 
 //	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
@@ -93,7 +95,6 @@ void Game::Loop() {
 	w.selection.clear();
 	w.octree.nearestKSearch(*w.cloud, w.camera, 15, w.selection, k_sqr);
 
-	
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -101,6 +102,10 @@ void Game::Loop() {
 	ren->Use();
 	ren->setCameraRotationPerspective( view->getRotMat(), view->perspectiveMatrix );
 	ren->setCameraPos(*vpos);
+
+	glm::vec4 dir = glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)*view->getRotMat();
+//	printv(dir);
+	w.terrain.Center( *vpos, dir );
 
 	int id, ind;
 	InstInfo ii;
@@ -143,29 +148,13 @@ void Game::Loop() {
 
 
 	renderInfo.clear();
-	for( int i=0; i<terrain_size; i++ ) {
-		for( int j=0; j<terrain_size; j++ ) {
-			for( int k=0; k<terrain_size; k++ ) {
-				glm::vec4 tpos = w.terrain.pos;
-				id = w.terrain.space[i][j][k]->instance_id;
-//I do not know why the steps size must be chunk_size/2.0f, otherwise there is a gap.
-				ii.position[0] = w.terrain.pos.x + w.terrain.chunk_size*(float)i/2.0f;
-				ii.position[1] = w.terrain.pos.y + w.terrain.chunk_size*(float)j/2.0f;
-				ii.position[2] = w.terrain.pos.z + w.terrain.chunk_size*(float)k/2.0f;
-/*
-				ii.position[0] = w.terrain.space[i][j][k]->position.x;
-				ii.position[1] = w.terrain.space[i][j][k]->position.y;
-				ii.position[2] = w.terrain.space[i][j][k]->position.z;
-*/
-				ii.depthMask_in = 1.0f;
-				renderInfo[id].push_back(ii);
-			}
-		}
-	}	
+	renderInfo = w.terrain.getRenderMap();
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 //		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
+
+
 	ren->DebugGrid();
 
 //FIX THIS, relying on camera being Object[0]
