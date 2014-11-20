@@ -2,9 +2,9 @@
 
 #include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
-	glm::vec3 v(x,y,z);
-	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
-	return glm::dot(glm::vec3(1.0f, 1.0f, 1.0f), v);
+//	glm::vec3 v(x,y,z);
+//	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
+//	return glm::dot(glm::vec3(1.0f, 1.0f, 1.0f), v);
 
 
 //	return glm::sin((x*x+y*y+z*z + 4)/30.0f);
@@ -193,6 +193,7 @@ void Terrain::MoveNDim(int dim) {
 }
 
 void Terrain::Center(glm::vec4 position, glm::vec4 direction) {
+/*
 	if( position.x > alignment.x + pos.x + chunk_size*(terrain_size/2.0f + 1.0f) )
 		MovePDim(4);
 	if( position.x < alignment.x + pos.x + chunk_size*(terrain_size/2.0f - 1.0f) )
@@ -207,8 +208,8 @@ void Terrain::Center(glm::vec4 position, glm::vec4 direction) {
 		MovePDim(1);
 	if( position.z < alignment.z + pos.z + chunk_size*(terrain_size/2.0f - 1.0f) )
 		MoveNDim(1);
+*/
 
-/*
 	glm::vec4 distal_point = position + direction * chunk_size * (terrain_size/2.0f);
 	if( distal_point.x > alignment.x + pos.x + chunk_size * (terrain_size + 1.0f))
 		MovePDim(4);
@@ -235,7 +236,7 @@ void Terrain::Center(glm::vec4 position, glm::vec4 direction) {
 		MoveNDim(1);
 	if( position.z > alignment.z + pos.z + chunk_size*(terrain_size - 1.0f) )
 		MovePDim(1);
-*/
+
 }
 
 

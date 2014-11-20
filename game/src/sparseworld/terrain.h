@@ -10,7 +10,7 @@
 
 float plane( const float & x, const float & y, const float & z );
 
-#define terrain_size 4
+#define terrain_size 3
 
 class Terrain {
 public:
