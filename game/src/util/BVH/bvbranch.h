@@ -32,11 +32,12 @@ void BVBranch<glm::vec4>::splitVolume(std::vector<glm::vec4> & v_in, int limit) 
 	glm::vec4 diff = max-min;
 	float max_diff = 0.0f;
 	int max_axis = -1;
-	for( int i=0; i<4; i++ )
+	for( int i=0; i<4; i++ ) {
 		if( diff[i] > max_diff ) {
 			max_diff = diff[i];
 			max_axis = i;
 		}
+	}
 
 	if( child[0] == NULL )
 		child[0] = new BVLeaf<glm::vec4>;
@@ -50,6 +51,7 @@ void BVBranch<glm::vec4>::splitVolume(std::vector<glm::vec4> & v_in, int limit) 
 	child0 = (BVLeaf<glm::vec4>*)child[0];
 
 	child1->items.reserve(v_in.size());
+	child1->items.resize(v_in.size());
 	it = std::copy_if(v_in.begin(), v_in.end(), child1->items.begin(),
 			[&](glm::vec4 & v) {
 				return v[max_axis] > mean[max_axis];
@@ -63,7 +65,7 @@ void BVBranch<glm::vec4>::splitVolume(std::vector<glm::vec4> & v_in, int limit) 
 		});
 	v_in.resize(it-v_in.begin());
 	v_in.shrink_to_fit();
-	child0->items.swap(v_in);
+	v_in.swap(child0->items);
 
 	BVLeaf<glm::vec4> * temp;
 	for( int i=0; i<2; i++ ) {
