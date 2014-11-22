@@ -13,5 +13,12 @@ void printm(const glm::mat4 &);
 
 float sumv(const glm::vec4 &);
 
+bool lt(const glm::vec4 &, const glm::vec4 &);
+bool gt(const glm::vec4 &, const glm::vec4 &);
+bool lte(const glm::vec4 &, const glm::vec4 &);
+bool gte(const glm::vec4 &, const glm::vec4 &);
+bool eq(const glm::vec4 &, const glm::vec4 &);
+
+
 
 #endif
