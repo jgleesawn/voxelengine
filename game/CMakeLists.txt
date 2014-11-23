@@ -44,7 +44,8 @@ set( GAME_DEFINITIONS
 
 file(GLOB GAME_SRC
 	"src/*.cpp"
-	"src/*/*.cpp" )
+	"src/*/*.cpp" 
+	"src/*/*/*.cpp" )
 
 set(CMAKE_CXX_FLAGS "-g -std=c++11" ${MAKE_CXX_FLAGS})
 

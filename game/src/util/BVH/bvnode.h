@@ -10,7 +10,7 @@ protected:
 
 public:
 	BVNode() {}
-	BVNode(T min_in, T max_in, BVNode<T> * parent_in = NULL) : min(min_in), max(max_in), parent(parent_in) { }
+	BVNode(T min_in, T max_in, BVNode<T> * parent_in = 0) : min(min_in), max(max_in), parent(parent_in) { }
 	BVNode(BVNode *);
 };
 
