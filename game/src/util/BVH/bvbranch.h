@@ -12,7 +12,7 @@ class BVBranch : public BVNode<T> {
 public:
 	BVNode<T> * child[2];
 
-	void splitVolume(std::vector<T> &, int limit);
+	void splitVolume(const std::vector<T> &, std::vector<int> &, int limit);
 	BVBranch() { child[0] = NULL; child[1] = NULL; this->parent = NULL; }
 	BVBranch(BVNode<T> * b_copy) : BVNode<T>(b_copy) { child[0] = NULL; child[1] = NULL; }
 };

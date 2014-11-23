@@ -4,8 +4,8 @@
 
 
 template<>
-void BVLeaf<glm::vec4>::setValues() {
-	if( items.size() )
+void BVLeaf<glm::vec4>::setValues(const std::vector<glm::vec4> & items) {
+	if( indices.size() )
 		this->min = this->max = items[0];
 	for( int i=0; i<items.size(); i++ ) {
 		this->min = glm::min(items[i], this->min);
