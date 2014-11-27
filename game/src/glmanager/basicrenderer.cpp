@@ -49,7 +49,11 @@ void BasicRenderer::setCameraPos( const glm::vec4 & vpos ) {
 
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
 void BasicRenderer::Render( Renderable * objs, const glm::vec4 & op ) {
-	glm::mat4 orotMat = glm::toMat4(objs->orientation);
+//	glm::mat4 orotMat = glm::toMat4(objs->orientation);
+	btTransform trans;
+	objs->getWorldTransform(trans);
+	btQuaternion q(trans.getRotation());
+	glm::mat4 orotMat = glm::toMat4(*(glm::quat *)&q);
 	
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], op[0], op[1], op[2], 0.0f);
@@ -72,7 +76,11 @@ void BasicRenderer::Render( Renderable * objs, const glm::vec4 & op ) {
 }
 
 void BasicRenderer::Wireframe( Renderable * objs, const glm::vec4 & op ) {
-	glm::mat4 orotMat = glm::toMat4(objs->orientation);
+//	glm::mat4 orotMat = glm::toMat4(objs->orientation);
+	btTransform trans;
+	objs->getWorldTransform(trans);
+	btQuaternion q(trans.getRotation());
+	glm::mat4 orotMat = glm::toMat4(*(glm::quat *)&q);
 	
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], op[0], op[1], op[2], 0.0f);

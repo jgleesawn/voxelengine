@@ -7,10 +7,15 @@
 #include "glmanager/glmanager.h"
 #include "generator.h"
 #include "object/renderable.h"
+#include "world.h"
+#include "bullet/modelmesh.h"
+#include "bullet/bulletbvh.h"
 
 float plane( const float & x, const float & y, const float & z );
 
 #define terrain_size 3
+
+class World;
 
 class Terrain {
 public:
@@ -22,8 +27,9 @@ public:
 	int debug_instance_id;
 
 	Generator g;	//Find a better way to handle this.  Generator/polygon class is large.
+	World * w;
 
-	Terrain();
+	Terrain(World *);
 	~Terrain();
 
 	void GenerateTerrain();

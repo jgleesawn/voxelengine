@@ -3,11 +3,8 @@ GL
 GLEW
 GLM
 SDL2
+Bullet
 
-Boost
-Eigen
-FLANN
-PCL
 
 Todo:
 ObjectManager

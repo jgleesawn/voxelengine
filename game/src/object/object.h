@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include <btBulletDynamicsCommon.h>
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -10,17 +12,24 @@
 
 #include "util/glm_util.h"
 
-class Object {
+class Object : public btDefaultMotionState {
 public:
 	int index;
-	glm::vec4 position;
+//	glm::vec4 position;
 	float pitch, yaw;
-	glm::quat orientation;
+//	glm::quat orientation;
+	float mass;
+	btCollisionShape * shape;
+	btVector3 inertia;
+	btRigidBody* rigidBody;
 
-	Object(glm::vec4, glm::quat or_in = glm::quat(), float p_in=0.0f, float y_in=0.0f);
+	Object(glm::vec4, glm::quat or_in = glm::quat(), float p_in=0.0f, float y_in=0.0f, float m_in=10.0f, btCollisionShape * shape_in = new btSphereShape(1));
+	~Object();
 
-	void Move(glm::vec4 offset) { position += offset; }
+	void Move(glm::vec4 offset);// { position += offset; }
 	void dQuat(const glm::quat &);
+
+	glm::vec4 getPosition();
 
 //	void rotParallel(float);
 //	void rotPerpendicular(float);

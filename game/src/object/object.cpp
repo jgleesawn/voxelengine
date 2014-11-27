@@ -1,10 +1,40 @@
 #include "object.h"
 
 
-Object::Object(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in) : position(pos_in), orientation(or_in), pitch(p_in), yaw(y_in) { }
+Object::Object(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in, float m_in, btCollisionShape * shape_in) {
+	btTransform trans(*(btQuaternion *)&or_in, *(btVector3 *)&pos_in);
+	setWorldTransform(trans);
+	pitch = p_in;
+	yaw = y_in;
+	mass = m_in;
+	shape = shape_in;
+	shape->calculateLocalInertia(mass, inertia);
+	btRigidBody::btRigidBodyConstructionInfo RigidBodyCI(mass, this, shape, inertia);
+
+	rigidBody = new btRigidBody(RigidBodyCI);	
+	
+}
+
+Object::~Object() {
+	delete shape;
+	delete rigidBody;
+}
+
+void Object::Move(glm::vec4 offset) {
+	btTransform trans;
+	getWorldTransform(trans);
+	trans.setOrigin(trans.getOrigin() + *(btVector3 *)&offset);
+	setWorldTransform(trans);
+}
 
 void Object::dQuat(const glm::quat & q) {
-	orientation *= q;
+//	orientation *= q;
+}
+
+glm::vec4 Object::getPosition() {
+	btTransform trans;
+	getWorldTransform(trans);
+	return *(glm::vec4 *)&trans.getOrigin();
 }
 /*
 void Object::rotParallel(float rad) {

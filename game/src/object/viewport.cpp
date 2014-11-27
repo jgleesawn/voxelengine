@@ -1,11 +1,15 @@
 #include "viewport.h"
 
-Viewport::Viewport(glm::vec4 pos_in, glm::quat or_in, glm::mat4 perspec_in) : Object(pos_in, or_in) {
+Viewport::Viewport(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in, float m_in, btCollisionShape * shape_in, glm::mat4 perspec_in) : Object(pos_in, or_in, p_in, y_in, m_in, shape_in) {
 	perspectiveMatrix = perspec_in;
 }
 
 void Viewport::Move(glm::vec4 offset) {
-	position -= offset*getRotMat();
+	btTransform trans;
+	getWorldTransform(trans);
+	trans.setOrigin(trans.getOrigin() - *(btVector3 *)&offset);
+	setWorldTransform(trans);
+//	position -= offset*getRotMat();
 }
 
 
