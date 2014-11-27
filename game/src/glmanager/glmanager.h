@@ -40,6 +40,7 @@ struct Inst {
 struct InstInfo {
 	GLfloat position[3];
 	GLfloat depthMask_in;
+	glm::mat4 rotMat;
 };
 
 class GLmanager {

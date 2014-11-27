@@ -99,6 +99,7 @@ std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
 						ii.position[2] = 0;
 
 						ii.depthMask_in = 1.0f;
+						ii.rotMat = glm::transpose(glm::mat4(1.0f));
 						renderInfo[id].push_back(ii);
 					}
 				}
@@ -122,6 +123,7 @@ std::map<int, std::vector<InstInfo> > Terrain::getDebugRenderMap(bool selector) 
 						ii.position[1] = alignment.y + pos.y + j * chunk_size + chunk_size/2.0f;
 						ii.position[2] = alignment.z + pos.z + k * chunk_size + chunk_size/2.0f;
 						ii.depthMask_in = chunk_size/2.0f;
+						ii.rotMat = glm::transpose(glm::mat4(1.0f));
 						renderInfo[debug_instance_id].push_back(ii);
 					}
 				}

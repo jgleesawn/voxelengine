@@ -127,14 +127,24 @@ int GLmanager::LoadInst(const ObjModel & obj, size_t max_num_instances) {
 	glBindVertexArray(inst->VAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-//	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
 	glBindBuffer( GL_ARRAY_BUFFER, inst->VBO );
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, vbo_struct_size, (void*) 0);
 	glBindBuffer( GL_ARRAY_BUFFER, inst->InstBO );
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) 0);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) (4*sizeof(GL_FLOAT)) );
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) (8*sizeof(GL_FLOAT)) );
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) (12*sizeof(GL_FLOAT)) );
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, inst_struct_size, (void*) (16*sizeof(GL_FLOAT)) );
 	glVertexAttribDivisor(0,0);
 	glVertexAttribDivisor(1,1);
-//	glVertexAttribDivisor(2,1);
+	glVertexAttribDivisor(2,1);
+	glVertexAttribDivisor(3,1);
+	glVertexAttribDivisor(4,1);
+	glVertexAttribDivisor(5,1);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, inst->IBO );
 
 	glBindVertexArray(0);

@@ -40,6 +40,7 @@ public:
 	glm::vec4 getUp();
 
 	glm::mat4 getRotMat();
+	glm::mat4 getQRotMat();
 	void rotY(float);
 	void rotX(float);
 };

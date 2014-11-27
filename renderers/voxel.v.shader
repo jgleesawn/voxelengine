@@ -6,6 +6,7 @@
 
 layout(location = 0) in vec4 vertexCoord;
 layout(location = 1) in vec4 position;	//x,y,z,depthMask
+layout(location = 2) in mat4 objRotation;
 //default depthMask_in, should be 1.  Higher values draw larger boxes;
 
 uniform vec4 lowerLeftBound;
@@ -23,7 +24,9 @@ void main()
 {
 	vec4 vertexPos = vec4( 0.0f, 0.0f, 0.0f, 0.0f );
 
-	vertexPos.xyz = vertexCoord.xyz* position.w *resolution;
+	vertexPos = vertexCoord*objRotation;
+	vertexPos.xyz *= position.w * resolution;
+//	vertexPos.xyz = vertexCoord.xyz* position.w *resolution;
 	vertexPos.xyz += position.xyz;
 //	vertexPos.xyz += resolution*position.xyz*256.0f;
 //	vertexPos.xyz += lowerLeftBound.xyz;

@@ -130,6 +130,7 @@ void Game::Loop() {
 //		*((glm::vec4 *) &ii.position) = *((glm::vec4 *) &w.cloud->points[ind]);
 //		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
 		ii.depthMask_in = 1;
+		*(glm::mat4 *) &ii.rotMat = glm::transpose(w.objects[ind]->getQRotMat());
 		renderInfo[id].push_back(ii);
 	}
 

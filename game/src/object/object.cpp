@@ -78,6 +78,12 @@ glm::vec4 Object::getUp() {
 glm::mat4 Object::getRotMat() {
 	return glm::eulerAngleXY(pitch, yaw);
 }
+glm::mat4 Object::getQRotMat() {
+	btTransform trans;
+	getWorldTransform(trans);
+	btQuaternion q = trans.getRotation();
+	return glm::toMat4(*(glm::quat *)&q);
+}
 
 void Object::rotY(float rad) {
 	yaw += rad;
