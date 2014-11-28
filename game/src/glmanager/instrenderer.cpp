@@ -143,12 +143,14 @@ void InstRenderer::DebugGrid() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 600*sizeof(int), ibo, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	glm::vec4 pos(0.0f);
-	pos.w = 1.0f;
+	InstInfo ii;
+	(*(glm::vec4 *)&ii.position) = glm::vec4(0.0f);
+	ii.rotMat = glm::mat4(1.0f);
+	ii.depthMask_in = 1.0f;
 	GLuint tmpInstBO;
 	glGenBuffers(1, &tmpInstBO);
 	glBindBuffer(GL_ARRAY_BUFFER, tmpInstBO);
-	glBufferData(GL_ARRAY_BUFFER, 1*sizeof(glm::vec4), &pos, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 1*sizeof(InstInfo), &ii, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	GLuint tmpVAO;
@@ -156,12 +158,24 @@ void InstRenderer::DebugGrid() {
 	glBindVertexArray(tmpVAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
 	glBindBuffer( GL_ARRAY_BUFFER, tmpVBO );
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
 	glBindBuffer( GL_ARRAY_BUFFER, tmpInstBO);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)(4*sizeof(GL_FLOAT)));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)(8*sizeof(GL_FLOAT)));
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)(12*sizeof(GL_FLOAT)));
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)(16*sizeof(GL_FLOAT)));
 	glVertexAttribDivisor(0,0);
 	glVertexAttribDivisor(1,1);
+	glVertexAttribDivisor(2,1);
+	glVertexAttribDivisor(3,1);
+	glVertexAttribDivisor(4,1);
+	glVertexAttribDivisor(5,1);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, tmpIBO);
 	glBindVertexArray(0);
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0);

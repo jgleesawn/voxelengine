@@ -2,10 +2,12 @@
 
 #include <glm/glm.hpp>
 float plane( const float & x, const float & y, const float & z ) {
-//	glm::vec3 v(x,y,z);
-//	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
-//	return glm::dot(glm::vec3(1.0f, 1.0f, 1.0f), v);
+	glm::vec3 v(x,y,z);
+	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
+	return glm::dot(glm::vec3(1.0f, 1.0f, 1.0f), v);
 
+//	return y;
+//	return 20 + y;
 
 //	return glm::sin((x*x+y*y+z*z + 4)/30.0f);
 
@@ -38,8 +40,7 @@ Terrain::~Terrain() {
 		for( int j=0; j<terrain_size; j++ ) 
 			for( int k=0; k<terrain_size; k++ ) 
 				if(space[i][j][k]) {
-					w->dynamicsWorld->removeCollisionObject(space[i][j][k]->rigidBody);
-					delete space[i][j][k];
+					w->removeObject(space[i][j][k]->index);
 				}
 }
 
@@ -94,9 +95,10 @@ std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
 //Work on World offset and loading based on precision bounds.
 //Will seem to be true coordinates to Bullet but will be relative coordinates to the entire world.
 //Size just needs to be larger than small chunking I was using.
-						ii.position[0] = 0;
-						ii.position[1] = -8.0;
-						ii.position[2] = 0;
+//						ii.position[0] = 0;
+//						ii.position[1] = -8.0;
+//						ii.position[1] = 0;
+//						ii.position[2] = 0;
 
 						ii.depthMask_in = 1.0f;
 						ii.rotMat = glm::transpose(glm::mat4(1.0f));
@@ -145,8 +147,7 @@ void Terrain::MovePDim(int dim) {
 			for( int k=0; k<1 + ((z+1)%2)*(terrain_size-1); k++ )
 				if( space[i][j][k] ) {
 					glm->RemoveInst(space[i][j][k]->instance_id);
-					w->dynamicsWorld->removeCollisionObject(space[i][j][k]->rigidBody);
-					delete space[i][j][k];
+					w->removeObject(space[i][j][k]->index);
 					space[i][j][k] = NULL;
 				}
 //Move all one position
@@ -192,8 +193,7 @@ void Terrain::MoveNDim(int dim) {
 			for( int k=terrain_size-1; k>=0 + z*(terrain_size-1); k-- )
 				if( space[i][j][k] ) {
 					glm->RemoveInst(space[i][j][k]->instance_id);
-					w->dynamicsWorld->removeCollisionObject(space[i][j][k]->rigidBody);
-					delete space[i][j][k];
+					w->removeObject(space[i][j][k]->index);
 					space[i][j][k] = NULL;
 				}
 //Move all one position

@@ -28,8 +28,13 @@ World::World() {
 }
 
 World::~World() {
-	for( int i=0; i<objects.size(); i++ )
-		delete objects[i];
+	for( int i=0; i<objects.size(); i++ ) {
+		if( objects[i] ) {
+			dynamicsWorld->removeCollisionObject(objects[i]->rigidBody);
+			delete objects[i];
+		}
+	}
+
 }
 
 int World::addObject( Object * obj, const glm::vec4 & pos ) {
@@ -39,6 +44,14 @@ int World::addObject( Object * obj, const glm::vec4 & pos ) {
 	objects.push_back(obj);
 	obj->index = objects.size()-1;//cloud->size()-1;
 	return obj->index;
+}
+
+void World::removeObject(int ind) {
+	if( objects[ind] ) {
+		dynamicsWorld->removeCollisionObject( objects[ind]->rigidBody );
+		delete objects[ind];
+		objects[ind] = NULL;
+	}
 }
 
 int World::makeRenderable( int ind ) {

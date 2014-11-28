@@ -115,10 +115,11 @@ ObjModel * Generator::generate(const glm::vec4 & llb, const float & size, densit
 
 //Bullet requires non-relative vertices.
 //				glm::vec4 vbo_vert = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f); // + llb;
-				glm::vec4 vbo_vert = starting_voffset*ss + density_ratio*v*ss + glm::vec4(llb.x+(float)j*ss, llb.y+(float)k*ss, llb.z+(float)i*ss, 0.0f); // + llb;
+				glm::vec4 vbo_vert = starting_voffset*ss + density_ratio*v*ss + glm::vec4((float)j*ss, (float)k*ss, (float)i*ss, 0.0f); // + llb;
 
 				mesh->vbo[vboind] = vbo_vert;
 				mesh->ibo.push_back(vboind);
+//				std::cout << mesh->vbo[vboind].y << " ";
 			}
 		}
 	}

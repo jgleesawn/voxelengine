@@ -35,6 +35,8 @@ public:
 	World();
 	~World();
 	int addObject( Object *, const glm::vec4 & pos );
+	void removeObject(int);
+
 	int makeRenderable( int );
 	void update();
 
