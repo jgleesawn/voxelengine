@@ -13,6 +13,8 @@
 #include "util/glm_util.h"
 
 class Object : public btDefaultMotionState {
+protected:
+	unsigned int type;
 public:
 	int index;
 //	glm::vec4 position;
@@ -25,6 +27,8 @@ public:
 
 	Object(glm::vec4, glm::quat or_in = glm::quat(), float p_in=0.0f, float y_in=0.0f, float m_in=10.0f, btCollisionShape * shape_in = new btSphereShape(1));
 	~Object();
+
+	unsigned int getType() { return type; }
 
 	void Move(glm::vec4 offset);// { position += offset; }
 	void dQuat(const glm::quat &);

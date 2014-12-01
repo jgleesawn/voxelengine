@@ -14,10 +14,12 @@ World::World() {
 
 	dynamicsWorld->setGravity(btVector3(0, -10, 0));
 /*
-	btCollisionShape * groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), -20);
+	btCollisionShape * groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), -10);
 	btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
 	btRigidBody::btRigidBodyConstructionInfo* groundRigidBodyCI = new btRigidBody::btRigidBodyConstructionInfo(0, groundMotionState, groundShape, btVector3(0, 0, 0));
 	btRigidBody* groundRigidBody = new btRigidBody(*groundRigidBodyCI);
+
+	groundRigidBody->setRestitution(1.0f);
 
 	dynamicsWorld->addRigidBody(groundRigidBody);
 */

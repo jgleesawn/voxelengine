@@ -17,6 +17,10 @@ Game::Game() {
 
 	view = new Viewport(glm::vec4(0.0f, 0.0f, 20.0f, 0.0f));
 	w.camera = w.addObject(view, view->getPosition());
+	w.objects[w.camera]->rigidBody->setCollisionFlags(
+		w.objects[w.camera]->rigidBody->getCollisionFlags() |
+		btCollisionObject::CF_KINEMATIC_OBJECT);
+	w.objects[w.camera]->rigidBody->setActivationState(DISABLE_DEACTIVATION);
 
 	glEnable(GL_DEPTH_TEST);
 //	glEnable(GL_CULL_FACE);
@@ -41,7 +45,8 @@ for( int j=0; j<1; j++ ) {
 		glm::quat q((float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5 );
 		q = glm::normalize(q);
 		Renderable * ro = new Renderable(pos, instance_ids.back(), q, 0, 0, 10, new btBoxShape(btVector3(1.0, 1.0, 1.0)));
-//		ro->rigidBody->setRestitution(2.0f);
+		ro->rigidBody->setRestitution(0.01f);
+//		std::cerr << ro->getType() << " ";
 
 		w.addObject(ro,pos);
 		w.makeRenderable(ro->index);
@@ -64,12 +69,12 @@ for( int j=0; j<1; j++ ) {
 	w.terrain->GenerateTerrain();
 //	w.terrain->MoveNDim(2);
 
-//	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
-	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_W;
+	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
+//	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_W;
 	interface.m[&World::MoveFocusLeft] = SDL_SCANCODE_A;
 	interface.m[&World::MoveFocusRight] = SDL_SCANCODE_D;
-//	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_S;
-	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_S;
+	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_S;
+//	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_S;
 
 //	interface.m[&World::RotFocusRight] = SDL_SCANCODE_RIGHT;
 //	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_LEFT;
@@ -130,14 +135,7 @@ void Game::Loop() {
 
 	std::map<int, std::vector<InstInfo> > renderInfo;
 	for( int i=0; i<w.renObjs.size(); i++ ) {
-		id = w.renObjs[i]->instance_id;
-		ind = w.renObjs[i]->index;
-		*((glm::vec4 *) &ii.position) = w.objects[ind]->getPosition();
-//		*((glm::vec4 *) &ii.position) = *((glm::vec4 *) &w.cloud->points[ind]);
-//		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
-		ii.depthMask_in = 1;
-		*(glm::mat4 *) &ii.rotMat = glm::transpose(w.objects[ind]->getQRotMat());
-		renderInfo[id].push_back(ii);
+		w.renObjs[i]->addRenderInfo(renderInfo);
 	}
 
 	glm::vec4 llb(0.0f), urf(0.0f);
@@ -153,23 +151,79 @@ void Game::Loop() {
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
 
-/*	//Will not work until I get another implementation of octrees up and running.
-	renderInfo.clear();
-//Starts at 1 because the closest to the camera is the camera itself. //assumption
-	for( int i=1; i<w.selection.size(); i++ ) {
-		id = ((Renderable *)w.objects[w.selection[i]])->instance_id;
-		ind = w.objects[w.selection[i]]->index;
-		*((glm::vec4 *) &ii.position) = *((glm::vec4 *) &w.cloud->points[ind]);
-//		w.octree.genKey(w.cloud->points[ind], *((pcl::octree::OctreeKey*) ((uint32_t *)ii.position)));
-		ii.depthMask_in = 1;
-		renderInfo[id].push_back(ii);
-	}
 
+//Mouse over object selection based on btCollisionWorld rayTest
+	renderInfo.clear();
+	int xmi, ymi;
+	SDL_GetMouseState(&xmi,&ymi);
+	float xmf, ymf;
+	xmf = -(float)xmi / 640.0f;
+	ymf = -(float)ymi / 480.0f;
+	xmf += 0.5f;
+	ymf += 0.5f;
+//	std::cerr << "x: " << xmf << " y: " << ymf << std::endl;
+
+	glm::quat qv, qr;
+	float close_height, close_width;
+	float cdist = 0.1f;
+	float fdist = 100.0f;
+	close_height = close_width = .1*glm::tan(glm::radians(45.0f));
+	float av = glm::atan(xmf * close_width / cdist);
+	float ar = glm::atan(ymf * close_height / cdist);
+	glm::vec4 vup = w.objects[w.camera]->getUp();
+	for( int i=0; i<3; i++ )
+		qv[i] = vup[i] * glm::sin(av/2.0f);
+	qv[3] = glm::cos(av/2.0f);
+	glm::vec4 vright = w.objects[w.camera]->getRight();
+	for( int i=0; i<3; i++ )
+		qr[i] = vright[i] * glm::sin(ar/2.0f);
+	qr[3] = glm::cos(ar/2.0f);
+
+	glm::vec4 forward = w.objects[w.camera]->getForward();
+	glm::vec3 f3(forward.x, forward.y, forward.z);
+	f3 = glm::normalize(f3);
+	glm::vec3 v3start = cdist * f3;
+	v3start = glm::rotate(qv, v3start);
+	v3start = glm::rotate(qr, v3start);
+
+	glm::vec3 v3end = fdist * f3;
+	v3end = glm::rotate(qv, v3end);
+	v3end = glm::rotate(qr, v3end);
+
+	glm::vec4 vstart(v3start, 0.0f);
+	glm::vec4 vend(v3end, 0.0f);
+
+	vstart = vstart + w.objects[w.camera]->getPosition();
+	vend = vend + w.objects[w.camera]->getPosition();
+	
+	glm::vec4 tmp;
+	tmp = w.objects[w.camera]->getPosition() + ymf * w.objects[w.camera]->getUp() + xmf * w.objects[w.camera]->getRight();
+	btVector3 start = *(btVector3 *)&(tmp);
+	tmp = w.objects[w.camera]->getForward();
+	btVector3 end = start + 300.0f* *(btVector3 *)&(tmp);
+
+	start = *(btVector3 *)&(vstart);
+	end = *(btVector3 *)&(vend);
+
+	btCollisionWorld::AllHitsRayResultCallback crr_callback(start, end);
+//	btKinematicClosestNotMeRayResultCallback * crr_callback = new btKinematicClosestNotMeRayResultCallback(w.objects[w.camera]->rigidBody);
+	w.dynamicsWorld->rayTest(start, end, crr_callback);
+	btRigidBody * rb;
+	Object * obj;
+	for( int i=0; i<crr_callback.m_collisionObjects.size(); i++ ) {
+		rb = (btRigidBody *) crr_callback.m_collisionObjects[i];
+		obj = (Object *)(rb->getMotionState());
+		if( obj->getType() != 10 ) {
+			continue;
+		}
+//		std::cerr << "Ind: " << obj->index << std::endl;
+		((Renderable *)obj)->addRenderInfo(renderInfo);
+	}
 	llb = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
-*/
+	renderInfo.clear();
 
 	renderInfo.clear();
 	renderInfo = w.terrain->getRenderMap();

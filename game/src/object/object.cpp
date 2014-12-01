@@ -2,6 +2,7 @@
 
 
 Object::Object(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in, float m_in, btCollisionShape * shape_in) {
+	type = 0;
 	btTransform trans(*(btQuaternion *)&or_in, *(btVector3 *)&pos_in);
 	setWorldTransform(trans);
 	pitch = p_in;
@@ -62,9 +63,10 @@ void Object::rotPerpendicular(float rad) {
 	orientation = glm::rotate(q, orientation);
 }
 */
-
+//Breaks regular object movement
+//Fix it by reverting to 0,0,1,0
 glm::vec4 Object::getForward() {
-	return glm::vec4(0.0f, 0.0f, 1.0f, 0.0f)*getRotMat();
+	return glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)*getRotMat();
 }
 
 glm::vec4 Object::getRight() {

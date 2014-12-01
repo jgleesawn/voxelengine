@@ -1,10 +1,16 @@
 #include "terrain.h"
 
 #include <glm/glm.hpp>
+noise::module::Perlin p_module;
+noise::module::RidgedMulti rm_module;
 float plane( const float & x, const float & y, const float & z ) {
-	noise::module::Perlin n_module;
-	float density = n_module.GetValue(x, y, z) + y + 20;
-	std::cerr << density << " ";
+	float density;
+	rm_module.SetFrequency(1/100.0f);
+//	p_module.SetFrequency(1/10.0f);
+//	p_module.SetPersistence(0.1);
+//	density = 10.0f*p_module.GetValue(x, y, z) + y + 20;
+	density = 20.0f*rm_module.GetValue(x, 0, z) + y + 20;
+//	std::cerr << density << " ";
 	return density;
 	glm::vec3 v(x,y,z);
 	v = 1000.0f*glm::sin(v/1000.0f) + 200.0f*glm::cos(v/500.0f) + 100.0f*glm::sin(v/200.0f) + 50.0f*glm::sin(v/75.0f) + 25.0f*glm::cos(v/37.5f) + 12.5f*glm::sin(v/20.0f) + 6.75f*glm::cos(v/7.438f) + 2.1823f*glm::sin(v);
@@ -73,6 +79,7 @@ mm.release();
 glm::quat q;
 
 						space[i][j][k] = new Renderable(pos_offset, glm->LoadInst(*obj_model,1),q, 0, 0, 0, mesh_shape);
+						space[i][j][k]->rigidBody->setRestitution(100.0f);
 						w->addObject(space[i][j][k], glm::vec4(0.0f));
 					}
 				}
@@ -180,6 +187,7 @@ mm.release();
 glm::quat q;
 
 					space[i][j][k] = new Renderable(pos_offset, glm->LoadInst(*obj_model,1),q, 0, 0, 0, mesh_shape);
+					space[i][j][k]->rigidBody->setRestitution(100.0f);
 					w->addObject(space[i][j][k], glm::vec4(0.0f));
 				}
 			}
@@ -226,6 +234,7 @@ mm.release();
 glm::quat q;
 
 					space[i][j][k] = new Renderable(pos_offset, glm->LoadInst(*obj_model,1),q, 0, 0, 0, mesh_shape);
+					space[i][j][k]->rigidBody->setRestitution(100.0f);
 					w->addObject(space[i][j][k], glm::vec4(0.0f));
 				}
 			}

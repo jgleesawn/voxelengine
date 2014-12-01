@@ -7,8 +7,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include <SDL2/SDL_mouse.h>
 
 #include <vector>
+
+//#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+//class btKinematicClosestNotMeRayResultCallback;
 
 #include "glmanager/glengine.h"
 #include "glmanager/instrenderer.h"
