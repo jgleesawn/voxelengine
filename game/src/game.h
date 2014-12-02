@@ -17,6 +17,9 @@
 #include "glmanager/glengine.h"
 #include "glmanager/instrenderer.h"
 #include "interface/interface.h"
+#include "interface/inputstatehierarchy.h"
+#include "interface/state.h"
+#include "interface/device.h"
 
 #include "sparseworld/world.h"
 
@@ -30,16 +33,13 @@ public:
 
 	std::vector<input> inputs;
 
-	std::vector<int> instance_ids;
-//	std::vector<gfxObj_t> gfxObjs;
-//	std::vector<Renderable *> renObjs;
-
-//	Interface<Viewport> interface;
 	Interface<World> interface;
+	InputStateHierarchy ISH;
+	
 
 	Game();
 	~Game();
-	void addInput(const void *, int, int);
+
 	void Loop();
 };
 

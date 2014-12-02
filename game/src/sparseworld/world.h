@@ -42,18 +42,18 @@ public:
 
 	void MoveObject( Object *, const glm::vec4 & );
 	
-	void MoveFocusForward();
-	void MoveFocusLeft();
-	void MoveFocusRight();
-	void MoveFocusBack();
+	void MoveFocusForward(int, int*);
+	void MoveFocusLeft(int, int*);
+	void MoveFocusRight(int, int*);
+	void MoveFocusBack(int, int*);
 
-	void RotFocusRight();
-	void RotFocusLeft();
-	void RotFocusUp();
-	void RotFocusDown();
+	void RotFocusRight(int, int*);
+	void RotFocusLeft(int, int*);
+	void RotFocusUp(int, int*);
+	void RotFocusDown(int, int*);
 
-	void focusCamera();
-	void focusNext();
+	void focusCamera(int, int*);
+	void focusNext(int, int*);
 
 	void Wiggle();	//remove
 };

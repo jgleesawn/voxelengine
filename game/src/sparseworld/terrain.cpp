@@ -4,6 +4,7 @@
 noise::module::Perlin p_module;
 noise::module::RidgedMulti rm_module;
 float plane( const float & x, const float & y, const float & z ) {
+	return 20 + y;
 	float density;
 	rm_module.SetFrequency(1/100.0f);
 //	p_module.SetFrequency(1/10.0f);
@@ -52,6 +53,17 @@ Terrain::~Terrain() {
 				if(space[i][j][k]) {
 					w->removeObject(space[i][j][k]->index);
 				}
+}
+
+void Terrain::setValues(GLmanager * glm_in) {
+	glm = glm_in;
+	debug_instance_id = 0;
+	chunk_size = 10*2*3.1415f;
+	alignment = glm::vec4(0.0f);
+	alignment.x -= 2*3.1415f;
+	alignment.y -= 2*3.1415f;
+	alignment.z -= 2*3.1415f;
+	pos = glm::vec4(0.0f);
 }
 
 void Terrain::GenerateTerrain() {

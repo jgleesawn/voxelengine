@@ -15,7 +15,7 @@
 
 float plane( const float & x, const float & y, const float & z );
 
-#define terrain_size 3
+#define terrain_size 5
 
 class World;
 
@@ -33,6 +33,8 @@ public:
 
 	Terrain(World *);
 	~Terrain();
+
+	void setValues(GLmanager *);
 
 	void GenerateTerrain();
 	std::map<int, std::vector<InstInfo> > getRenderMap();

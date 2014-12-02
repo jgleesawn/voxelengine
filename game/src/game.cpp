@@ -27,7 +27,7 @@ Game::Game() {
 	glDisable(GL_CULL_FACE);
 
 for( int j=0; j<1; j++ ) {
-	instance_ids.push_back(glm.LoadInst("res/nonTriangle/untitled.obj"));
+	int instance_id = glm.LoadInst("res/nonTriangle/untitled.obj");
 
 	for( int i=0; i<50; i++ ) {
 //		glm::vec4 pos((float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX, (float)rand()/RAND_MAX );
@@ -35,16 +35,10 @@ for( int j=0; j<1; j++ ) {
 		float y = (i/9); y *= 5.0; y += 50.0f;
 		float z = (i/3)%3; z -= 1.5; z *= 5.0;
 		glm::vec4 pos(x,y,z, (float)rand()/RAND_MAX );
-//		pos *= 200.0f;
-//		pos -= 100.0f;
-
-//		pos.x = 0.0f;
-//		pos.y = 0.0f;
-//		pos.z = -0.5f;
 		pos.w = 0.0f;
 		glm::quat q((float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5 );
 		q = glm::normalize(q);
-		Renderable * ro = new Renderable(pos, instance_ids.back(), q, 0, 0, 10, new btBoxShape(btVector3(1.0, 1.0, 1.0)));
+		Renderable * ro = new Renderable(pos, instance_id, q, 0, 0, 10, new btBoxShape(btVector3(1.0, 1.0, 1.0)));
 		ro->rigidBody->setRestitution(0.01f);
 //		std::cerr << ro->getType() << " ";
 
@@ -53,56 +47,21 @@ for( int j=0; j<1; j++ ) {
 	}
 	
 }
-	w.terrain->glm = &glm;
-	w.terrain->debug_instance_id = 0;
-//	w.terrain->chunk_size = 2*3.1415f;
-	w.terrain->chunk_size = 10*2*3.1415f;
-//	w.terrain->pos = w.objects[w.camera]->position;
-	w.terrain->alignment = glm::vec4(0.0f);
-	w.terrain->alignment.x -= 2*3.1415f;
-	w.terrain->alignment.y -= 2*3.1415f;
-//	w.terrain->alignment.y -= .1415f;
-//	w.terrain->alignment.y += w.terrain->chunk_size/2.0f;
-//	w.terrain->alignment.y -= w.terrain->chunk_size/2.0f;
-	w.terrain->alignment.z -= 2*3.1415f; //0.122384;
-	w.terrain->pos = glm::vec4(0.0f);
+	w.terrain->setValues(&glm);
 	w.terrain->GenerateTerrain();
-//	w.terrain->MoveNDim(2);
 
-	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_W;
-//	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_W;
-	interface.m[&World::MoveFocusLeft] = SDL_SCANCODE_A;
-	interface.m[&World::MoveFocusRight] = SDL_SCANCODE_D;
-	interface.m[&World::MoveFocusBack] = SDL_SCANCODE_S;
-//	interface.m[&World::MoveFocusForward] = SDL_SCANCODE_S;
-
-//	interface.m[&World::RotFocusRight] = SDL_SCANCODE_RIGHT;
-//	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_LEFT;
-	interface.m[&World::RotFocusLeft] = SDL_SCANCODE_RIGHT;
-	interface.m[&World::RotFocusRight] = SDL_SCANCODE_LEFT;
-	interface.m[&World::RotFocusUp] = SDL_SCANCODE_UP;
-	interface.m[&World::RotFocusDown] = SDL_SCANCODE_DOWN;
-
-	interface.m[&World::focusCamera] = SDL_SCANCODE_SPACE;
-	interface.m[&World::focusNext] = SDL_SCANCODE_TAB;
+	ISH.addState(new TState<World>(&ISH, &w));
 }
-
 Game::~Game() {
 	if( ren )
 		delete ren;
 }
 
-void Game::addInput(const void * state, int count, int stepsize) {
-	interface.state = (Uint8 *)state;
-	interface.count = count;
-
-//	input in = {state, count, stepsize};
-//	inputs.push_back(in);
-
-}
 void Game::Loop() {
 //	std::cout << w.ot.UR[0] << std::endl;
-	interface.Loop(&w);
+//	interface.Loop(&w);
+	ISH.update();
+	ISH.processInputs();
 
 //	w.Wiggle();
 	w.update();
@@ -167,7 +126,7 @@ void Game::Loop() {
 	float close_height, close_width;
 	float cdist = 0.1f;
 	float fdist = 100.0f;
-	close_height = close_width = .1*glm::tan(glm::radians(45.0f));
+	close_height = close_width = cdist*glm::tan(glm::radians(45.0f));
 	float av = glm::atan(xmf * close_width / cdist);
 	float ar = glm::atan(ymf * close_height / cdist);
 	glm::vec4 vup = w.objects[w.camera]->getUp();
@@ -202,6 +161,9 @@ void Game::Loop() {
 	tmp = w.objects[w.camera]->getForward();
 	btVector3 end = start + 300.0f* *(btVector3 *)&(tmp);
 
+//	std::pair<glm::vec4, glm::vec4> p = view->getCloseFar(xmf, ymf);
+//	vstart = p.first;
+//	vend = p.second;
 	start = *(btVector3 *)&(vstart);
 	end = *(btVector3 *)&(vend);
 

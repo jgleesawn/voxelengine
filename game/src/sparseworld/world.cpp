@@ -72,39 +72,39 @@ void World::MoveObject( Object * obj, const glm::vec4 & offset ) {
 //	*(glm::vec4 *)&(cloud->points[obj->index]) += offset;
 }
 
-void World::MoveFocusForward() {
+void World::MoveFocusForward(int ddsize, int* ddata) {
 	objects[focus]->Move(0.5f*objects[focus]->getForward());
 }
 
-void World::MoveFocusRight() {
+void World::MoveFocusRight(int ddsize, int* ddata) {
 	objects[focus]->Move(0.5f*objects[focus]->getRight());
 }
 
-void World::MoveFocusLeft() {
+void World::MoveFocusLeft(int ddsize, int* ddata) {
 	objects[focus]->Move(-0.5f*objects[focus]->getRight());
 }
 
-void World::MoveFocusBack() {
+void World::MoveFocusBack(int ddsize, int* ddata) {
 	objects[focus]->Move(-0.5f*objects[focus]->getForward());
 }
 
-void World::RotFocusRight() {
+void World::RotFocusRight(int ddsize, int* ddata) {
 	objects[focus]->rotY(-.05);
 }
 
-void World::RotFocusLeft() {
+void World::RotFocusLeft(int ddsize, int* ddata) {
 	objects[focus]->rotY(.05);
 }
 
-void World::RotFocusUp() {
+void World::RotFocusUp(int ddsize, int* ddata) {
 	objects[focus]->rotX(.05);
 }
 
-void World::RotFocusDown() {
+void World::RotFocusDown(int ddsize, int* ddata) {
 	objects[focus]->rotX(-.05);
 }
 
-void World::focusCamera() {
+void World::focusCamera(int ddsize, int* ddata) {
 	btTransform trans;
 	objects[focus]->getWorldTransform(trans);
 	objects[camera]->setWorldTransform(trans);
@@ -112,7 +112,7 @@ void World::focusCamera() {
 //	printv(*(glm::vec4 *)&(cloud->points[focus]));
 }
 
-void World::focusNext() {
+void World::focusNext(int ddsize, int* ddata) {
 	focus++;
 	if( focus > objects.size() )
 		focus = 0;

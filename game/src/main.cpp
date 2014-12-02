@@ -41,7 +41,7 @@ int main( int argc, char* args[] ) {
 	std::cerr << "pregame" << std::endl;	
 	Game game;
 	std::cerr << "preinput" << std::endl;
-	game.addInput((void*)kb, kbsize, sizeof(Uint8));
+//	game.addInput((void*)kb, kbsize, sizeof(Uint8));
 
 	bool quit = false;
 	SDL_Event event;

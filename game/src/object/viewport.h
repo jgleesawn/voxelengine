@@ -10,6 +10,8 @@
 #include <iostream>
 #include <functional>
 
+#include <utility>
+
 #include "object.h"
 
 class Viewport : public Object {
@@ -26,6 +28,10 @@ public:
 //If you make void Forward() virtual it would fix camera movement
 //if you revert the object.h void Forward();
 	void Forward() { Move(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); }
+
+	std::pair<glm::vec4, glm::vec4> getCloseFar(float, float);
+//	glm::vec4 getClose(float, float);
+//	glm::vec4 getFar(float, float);
 };
 
 #endif
