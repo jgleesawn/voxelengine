@@ -1,6 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include <iostream>
+
 #include "sparseworld/world.h"
 #include "object/viewport.h"
 #include "interface/inputstatehierarchy.h"
@@ -36,6 +38,7 @@ struct Controller {
 	State* RotFocusUp(int, float*);
 	State* RotFocusDown(int, float*);
 
+//HAS MEMORY LEAK
 	State* raySelect(int, float*);
 
 };

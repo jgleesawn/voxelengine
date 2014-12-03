@@ -54,7 +54,8 @@ template<>
 TState<TempSelection>::TState(InputStateHierarchy * ISH_in, TempSelection * obj_in) {
 	ISH = ISH_in;
 	obj = obj_in;
-	setInput(&TempSelection::Dummy, 0, (int)SDL_SCANCODE_TAB, 0, 1);
+	setInput(&TempSelection::Finish, 0, (int)SDL_SCANCODE_TAB, 0, 1);
+	setInput(&TempSelection::Update, 0, (int)SDL_SCANCODE_TAB, 1, 1);
 }
 /*
 template <>

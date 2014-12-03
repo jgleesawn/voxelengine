@@ -62,30 +62,14 @@ State* Controller::RotFocusDown(int ddsize, float* ddata) {
 
 //Abuses the fact that Controller object has been passed a Viewport
 State* Controller::raySelect(int ddsize, float* ddata) {
-	btVector3 start, end;
-	std::pair<glm::vec4, glm::vec4> p = ((Viewport *)&(w->objects[object_id]))->getCloseFar(ddata[0], ddata[1]);
-	start = *(btVector3 *)&p.first;
-	end = *(btVector3 *)&p.second;
-
-	btCollisionWorld::AllHitsRayResultCallback crr_callback(start, end);
-	w->dynamicsWorld->rayTest(start, end, crr_callback);
-
-//	State * tselect = new TState<TempSelection>(ISH);
+//	std::cerr << "Controller::raySelect" << std::endl;
 	TempSelection * tselect = new TempSelection();
 	tselect->setRen(w->ren);
 	tselect->setGLM(w->glm);
-	btRigidBody * rb;
-	Object * obj;
-	for( int i=0; i<crr_callback.m_collisionObjects.size(); i++ ) {
-		rb = (btRigidBody *) crr_callback.m_collisionObjects[i];
-		obj = (Object *)(rb->getMotionState());
-		if( obj->getType() != 10 ) {
-			continue;
-		}
-		tselect->renObjs.push_back((Renderable *)obj);
-//		((Renderable *)obj)->addRenderInfo(renderInfo);
-	}
-	return new TState<TempSelection>(&ISH, tselect);
+	tselect->view = (Viewport *)w->objects[object_id];
+	tselect->w = w;
+	State * s_ret = new TState<TempSelection>(&ISH, tselect);
+	return s_ret;
 }
 
 

@@ -47,15 +47,20 @@ struct TState : public State {
 			int ind = it->second[1];
 			int check_for = it->second[2];
 			int pass_dev = it->second[3];
-			if( !(ISH->da_mask[dev]->data[ind] || (ISH->da[dev]->data[ind] ^ check_for)) ) {
+			bool mask = (ISH->da_mask[dev]->data[ind] >> (bool)check_for) & 1;
+			if( !(mask || (ISH->da[dev]->data[ind] ^ check_for)) ) {
 //			if( !(ISH->da[dev]->data[ind] ^ check_for) ) {
 				State * n_state = (obj->*(it->first))(ISH->da[pass_dev]->vsize, ISH->da[pass_dev]->vals);
-				if( n_state )
+				if( (int) n_state == -1 ) {
+					exit();
+					return;
+				}
+				else if( n_state )
 					ISH->pushState(n_state);
 //				ISH->da[dev]->data[ind] = 0;
 //				ISH->da_mask[dev]->data[ind] = 1;
 			}
-			ISH->da_mask[dev]->data[ind] = 1;
+			ISH->da_mask[dev]->data[ind] |= 1 << (bool)check_for;
 		}
 	}
 	virtual void Render() {
