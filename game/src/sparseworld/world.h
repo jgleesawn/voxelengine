@@ -14,10 +14,11 @@
 #include "object/renderable.h"
 
 #include "interface/state.h"
+#include "scenes/scene.h"
 
 class Terrain;
 
-class World {
+class World : public Scene<ObjModel> {
 public:
 	btBroadphaseInterface* broadphase;
 	btDefaultCollisionConfiguration* collisionConfiguration;
@@ -36,6 +37,8 @@ public:
 public:
 	World();
 	~World();
+	virtual void LoadScene();
+
 	int addObject( Object *, const glm::vec4 & pos );
 	void removeObject(int);
 

@@ -13,20 +13,6 @@ World::World() {
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 
 	dynamicsWorld->setGravity(btVector3(0, -10, 0));
-/*
-	btCollisionShape * groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), -10);
-	btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
-	btRigidBody::btRigidBodyConstructionInfo* groundRigidBodyCI = new btRigidBody::btRigidBodyConstructionInfo(0, groundMotionState, groundShape, btVector3(0, 0, 0));
-	btRigidBody* groundRigidBody = new btRigidBody(*groundRigidBodyCI);
-
-	groundRigidBody->setRestitution(1.0f);
-
-	dynamicsWorld->addRigidBody(groundRigidBody);
-*/
-//	cloud->width = 0;
-//	cloud->height = 1;
-//	cloud->points.resize(0);
-//	octree.setInputCloud(cloud);
 }
 
 World::~World() {
@@ -36,7 +22,12 @@ World::~World() {
 			delete objects[i];
 		}
 	}
+}
 
+void World::LoadScene() {
+	renderInfo = terrain->getRenderMap();
+	for( int i=0; i<renObjs.size(); i++ )
+		renObjs[i]->addRenderInfo(renderInfo);
 }
 
 int World::addObject( Object * obj, const glm::vec4 & pos ) {

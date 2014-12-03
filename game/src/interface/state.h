@@ -6,11 +6,22 @@
 #include "inputstatehierarchy.h"
 #include "device.h"
 #include "interface.h"	//For sorting of a member function
+#include "controllers/controller.h"
 
 struct State {
 	InputStateHierarchy * ISH;
 	virtual void processInputs() = 0;
 	virtual void Render() = 0;
+	void exit() {
+		while( ISH->states.back() != this && !ISH->states.empty() ) {
+			delete ISH->states.back();
+			ISH->states.pop_back();
+		}
+		if( !ISH->states.empty() ) {
+			delete ISH->states.back();
+			ISH->states.pop_back();
+		}
+	}
 };
 
 template <typename T>
@@ -49,7 +60,7 @@ struct TState : public State {
 	}
 	virtual void Render() {
 //Uncomment when Scene is implemented as a base class.
-//		obj->Render();
+		obj->Render();
 	}
 };
 

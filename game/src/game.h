@@ -23,6 +23,8 @@
 
 #include "sparseworld/world.h"
 
+#include "controllers/controller.h"
+
 class Game {
 	
 public:
@@ -31,11 +33,8 @@ public:
 	Viewport * view;
 	World w;
 
-	std::vector<input> inputs;
-
-	Interface<World> interface;
+	std::vector<Controller *> players;
 	InputStateHierarchy ISH;
-	
 
 	Game();
 	~Game();

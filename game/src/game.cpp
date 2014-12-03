@@ -13,6 +13,9 @@ Game::Game() {
 	ren->Initialize();
 	ren->setGLM(&glm);
 
+	w.setRen(ren);
+	w.setGLM(&glm);
+
 	std::cerr << "renderer loaded." << std::endl;
 
 	view = new Viewport(glm::vec4(0.0f, 0.0f, 20.0f, 0.0f));
@@ -50,6 +53,8 @@ for( int j=0; j<1; j++ ) {
 	w.terrain->setValues(&glm);
 	w.terrain->GenerateTerrain();
 
+	players.push_back(new Controller(&w));
+
 	ISH.pushState(new TState<World>(&ISH, &w));
 }
 Game::~Game() {
@@ -60,29 +65,28 @@ Game::~Game() {
 void Game::Loop() {
 //	std::cout << w.ot.UR[0] << std::endl;
 //	interface.Loop(&w);
-	ISH.update();
-	ISH.processInputs();
+	for( int i=0; i<players.size(); i++ ) {
+		players[i]->ISH.update();
+		players[i]->ISH.processInputs();
+	}
+//	ISH.update();
+//	ISH.processInputs();
 
-//	w.Wiggle();
 	w.update();
-
-//	btTransform trans;
-//	w.objects[1]->getWorldTransform(trans);
-//	std::cout << (float)trans.getOrigin().x() << " " << (float)trans.getOrigin().y() << " " << (float)trans.getOrigin().z() << std::endl;
-
-
-	std::vector<float> k_sqr;
-	w.selection.clear();
-//	w.octree.nearestKSearch(*w.cloud, w.camera, 15, w.selection, k_sqr);
 
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+	players[0]->ISH.renderStates();
+
 //	glm::vec4 * vpos = (glm::vec4 *)&(w.cloud->points[w.camera]);
 	glm::vec4 vpos = w.objects[w.camera]->getPosition();
-	ren->Use();
-	ren->setCameraRotationPerspective( view->getRotMat(), view->perspectiveMatrix );
-	ren->setCameraPos(vpos);
+
+//	ren->Use();
+//	ren->setCameraRotationPerspective( view->getRotMat(), view->perspectiveMatrix );
+//	ren->setCameraPos(vpos);
+
+
 
 	glm::vec4 dir = glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)*view->getRotMat();
 //	printv(dir);
@@ -91,25 +95,15 @@ void Game::Loop() {
 
 	int id, ind;
 	InstInfo<ObjModel> ii;
-
+//COMMENTED
+//	w.LoadScene();
+//	w.Render();
 	std::map<int, std::vector<InstInfo<ObjModel> > > renderInfo;
-	for( int i=0; i<w.renObjs.size(); i++ ) {
-		w.renObjs[i]->addRenderInfo(renderInfo);
-	}
 
-	glm::vec4 llb(0.0f), urf(0.0f);
-	double x,y,z;
-//	w.octree.getBoundingBox(x, y, z, (double&)urf.x, (double&)urf.y, (double&)urf.z);
-	llb.x = x; llb.y = y; llb.z = z;
-//	float resolution = w.octree.getResolution();
+	glm::vec4 llb(0.0f);
 	float resolution = 1.0f;
 
-//llb is currently not actually relied on outside of being an argument.
 	std::map<int, std::vector<InstInfo<ObjModel> > >::iterator it;
-	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
-		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
-	}
-
 
 //Mouse over object selection based on btCollisionWorld rayTest
 	renderInfo.clear();
@@ -129,7 +123,7 @@ void Game::Loop() {
 	vend = p.second;
 	start = *(btVector3 *)&(vstart);
 	end = *(btVector3 *)&(vend);
-
+/* COMMENTED
 	btCollisionWorld::AllHitsRayResultCallback crr_callback(start, end);
 //	btKinematicClosestNotMeRayResultCallback * crr_callback = new btKinematicClosestNotMeRayResultCallback(w.objects[w.camera]->rigidBody);
 	w.dynamicsWorld->rayTest(start, end, crr_callback);
@@ -149,13 +143,7 @@ void Game::Loop() {
 		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
 	renderInfo.clear();
-
-	renderInfo.clear();
-	renderInfo = w.terrain->getRenderMap();
-	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
-//		ren->WireframeInst(*glm.gfxInst[it->first], it->second, llb, resolution);
-		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
-	}
+*/
 
 	renderInfo.clear();
 	renderInfo = w.terrain->getDebugRenderMap();
@@ -175,7 +163,6 @@ void Game::Loop() {
 
 
 	ren->DebugGrid();
-
 //FIX THIS, relying on camera being Object[0]
 //	if( w.focus ) {
 //		glm::vec4 * opos = (glm::vec4 *)&(w.cloud->points[w.objects[w.focus]->index]);
