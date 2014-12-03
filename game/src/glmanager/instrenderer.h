@@ -15,27 +15,52 @@
 
 //May have to change Render function to virtual.
 
-class InstRenderer : public BasicRenderer {
+template<typename T>
+class InstRenderer : public BasicRenderer<T> {
 public:
 	virtual void Initialize();
 	InstRenderer();
 	~InstRenderer() { }//glDeleteProgram(theProgram); }
 
-	//void setGLM(GLmanager *);
-
-	//void setCameraRotationPerspective(const glm::mat4 &, const glm::mat4 & );
-	//void setCameraPos(const glm::vec4 &);
-
-	void RenderInst(const Inst &, const std::vector<InstInfo> &, const glm::vec4 &, const float &);
-	void WireframeInst(const Inst &, const std::vector<InstInfo> &, const glm::vec4 &, const float &);
+	void RenderInst(const Inst &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
+	void WireframeInst(const Inst &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
 
 	void DebugGrid();
-
-//	virutal void Render(Renderable *, const glm::vec4 &);
-//	virtual void Wireframe(Renderable *, const glm::vec4 &);
-
-	//void reshape(int, int);
 };
+
+
+template< typename T >
+void InstRenderer<T>::Initialize() {
+	std::vector<shaderName> shaderNames;
+	shaderNames.push_back(shaderName(GL_VERTEX_SHADER, std::string("renderers/voxel.v.shader")));
+//	shaderNames.push_back(shaderName(GL_GEOMETRY_SHADER, std::string("renderers/basic.g.shader")));
+	shaderNames.push_back(shaderName(GL_FRAGMENT_SHADER, std::string("renderers/voxel.f.shader")));
+	this->theProgram = GLProgramBase().InitializeProgram(shaderNames);
+
+	std::cout << this->theProgram << std::endl;
+
+	glUseProgram(this->theProgram);
+
+//	GLint uvar[5];
+	this->uvar[0] = glGetUniformLocation( this->theProgram, "lowerLeftBound");
+	this->uvar[1] = glGetUniformLocation( this->theProgram, "resolution");
+	this->uvar[2] = glGetUniformLocation( this->theProgram, "viewOffset");
+	this->uvar[3] = glGetUniformLocation( this->theProgram, "viewRotation");
+	this->uvar[4] = glGetUniformLocation( this->theProgram, "Perspective");
+	this->uvar[5] = glGetUniformLocation( this->theProgram, "uColor");
+
+	for( int i=0; i<this->numUniforms; i++ )
+		std::cout << this->uvar[i] << std::endl;
+	glUseProgram(0);
+}
+
+template<typename T>
+InstRenderer<T>::InstRenderer() { 
+//	std::cout << "inst" << std::endl;
+	this->glm = NULL;
+	this->uvar = new int[6];
+	this->numUniforms = 6;
+}
 
 
 #endif

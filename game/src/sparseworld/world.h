@@ -13,6 +13,8 @@
 #include "object/object.h"
 #include "object/renderable.h"
 
+#include "interface/state.h"
+
 class Terrain;
 
 class World {
@@ -42,18 +44,22 @@ public:
 
 	void MoveObject( Object *, const glm::vec4 & );
 	
-	void MoveFocusForward(int, int*);
-	void MoveFocusLeft(int, int*);
-	void MoveFocusRight(int, int*);
-	void MoveFocusBack(int, int*);
+	State* MoveFocusForward(int, float*);
+	State* MoveFocusLeft(int, float*);
+	State* MoveFocusRight(int, float*);
+	State* MoveFocusBack(int, float*);
 
-	void RotFocusRight(int, int*);
-	void RotFocusLeft(int, int*);
-	void RotFocusUp(int, int*);
-	void RotFocusDown(int, int*);
+	State* RotFocusRight(int, float*);
+	State* RotFocusLeft(int, float*);
+	State* RotFocusUp(int, float*);
+	State* RotFocusDown(int, float*);
 
-	void focusCamera(int, int*);
-	void focusNext(int, int*);
+	State* focusCamera(int, float*);
+	State* focusNext(int, float*);
+
+//Pass XY in
+//Move to Controller class
+//	State* raySelect(int, float*);
 
 	void Wiggle();	//remove
 };

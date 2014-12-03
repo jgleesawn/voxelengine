@@ -9,7 +9,7 @@ Game::Game() {
 	else
 		std::cout << "no instanced arrays" << std::endl;
 		
-	ren = new InstRenderer();
+	ren = new InstRenderer<ObjModel>();
 	ren->Initialize();
 	ren->setGLM(&glm);
 
@@ -50,7 +50,7 @@ for( int j=0; j<1; j++ ) {
 	w.terrain->setValues(&glm);
 	w.terrain->GenerateTerrain();
 
-	ISH.addState(new TState<World>(&ISH, &w));
+	ISH.pushState(new TState<World>(&ISH, &w));
 }
 Game::~Game() {
 	if( ren )
@@ -90,9 +90,9 @@ void Game::Loop() {
 //	std::cout << "Current Density: " << plane((vpos)[0], (vpos)[1], (vpos)[2]) << std::endl;
 
 	int id, ind;
-	InstInfo ii;
+	InstInfo<ObjModel> ii;
 
-	std::map<int, std::vector<InstInfo> > renderInfo;
+	std::map<int, std::vector<InstInfo<ObjModel> > > renderInfo;
 	for( int i=0; i<w.renObjs.size(); i++ ) {
 		w.renObjs[i]->addRenderInfo(renderInfo);
 	}
@@ -105,7 +105,7 @@ void Game::Loop() {
 	float resolution = 1.0f;
 
 //llb is currently not actually relied on outside of being an argument.
-	std::map<int, std::vector<InstInfo> >::iterator it;
+	std::map<int, std::vector<InstInfo<ObjModel> > >::iterator it;
 	for( it = renderInfo.begin(); it != renderInfo.end(); it++ ) {
 		ren->RenderInst(*glm.gfxInst[it->first], it->second, llb, resolution);
 	}
@@ -121,49 +121,12 @@ void Game::Loop() {
 	xmf += 0.5f;
 	ymf += 0.5f;
 //	std::cerr << "x: " << xmf << " y: " << ymf << std::endl;
+	glm::vec4 vstart, vend;
+	btVector3 start, end;
 
-	glm::quat qv, qr;
-	float close_height, close_width;
-	float cdist = 0.1f;
-	float fdist = 100.0f;
-	close_height = close_width = cdist*glm::tan(glm::radians(45.0f));
-	float av = glm::atan(xmf * close_width / cdist);
-	float ar = glm::atan(ymf * close_height / cdist);
-	glm::vec4 vup = w.objects[w.camera]->getUp();
-	for( int i=0; i<3; i++ )
-		qv[i] = vup[i] * glm::sin(av/2.0f);
-	qv[3] = glm::cos(av/2.0f);
-	glm::vec4 vright = w.objects[w.camera]->getRight();
-	for( int i=0; i<3; i++ )
-		qr[i] = vright[i] * glm::sin(ar/2.0f);
-	qr[3] = glm::cos(ar/2.0f);
-
-	glm::vec4 forward = w.objects[w.camera]->getForward();
-	glm::vec3 f3(forward.x, forward.y, forward.z);
-	f3 = glm::normalize(f3);
-	glm::vec3 v3start = cdist * f3;
-	v3start = glm::rotate(qv, v3start);
-	v3start = glm::rotate(qr, v3start);
-
-	glm::vec3 v3end = fdist * f3;
-	v3end = glm::rotate(qv, v3end);
-	v3end = glm::rotate(qr, v3end);
-
-	glm::vec4 vstart(v3start, 0.0f);
-	glm::vec4 vend(v3end, 0.0f);
-
-	vstart = vstart + w.objects[w.camera]->getPosition();
-	vend = vend + w.objects[w.camera]->getPosition();
-	
-	glm::vec4 tmp;
-	tmp = w.objects[w.camera]->getPosition() + ymf * w.objects[w.camera]->getUp() + xmf * w.objects[w.camera]->getRight();
-	btVector3 start = *(btVector3 *)&(tmp);
-	tmp = w.objects[w.camera]->getForward();
-	btVector3 end = start + 300.0f* *(btVector3 *)&(tmp);
-
-//	std::pair<glm::vec4, glm::vec4> p = view->getCloseFar(xmf, ymf);
-//	vstart = p.first;
-//	vend = p.second;
+	std::pair<glm::vec4, glm::vec4> p = view->getCloseFar(xmf, ymf);
+	vstart = p.first;
+	vend = p.second;
 	start = *(btVector3 *)&(vstart);
 	end = *(btVector3 *)&(vend);
 

@@ -55,7 +55,7 @@ Terrain::~Terrain() {
 				}
 }
 
-void Terrain::setValues(GLmanager * glm_in) {
+void Terrain::setValues(GLmanager<ObjModel> * glm_in) {
 	glm = glm_in;
 	debug_instance_id = 0;
 	chunk_size = 10*2*3.1415f;
@@ -101,10 +101,10 @@ glm::quat q;
 	std::cout << std::endl;
 }
 
-std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
+std::map< int, std::vector<InstInfo<ObjModel> > > Terrain::getRenderMap() {
 	int id, ind;
-	std::map< int, std::vector<InstInfo> > renderInfo;
-	InstInfo ii;
+	std::map< int, std::vector<InstInfo<ObjModel> > > renderInfo;
+	InstInfo<ObjModel> ii;
 	for( int i=0; i<terrain_size; i++ ) {
 		for( int j=0; j<terrain_size; j++ ) {
 			for( int k=0; k<terrain_size; k++ ) {
@@ -134,10 +134,10 @@ std::map< int, std::vector<InstInfo> > Terrain::getRenderMap() {
 	return renderInfo;
 }
 
-std::map<int, std::vector<InstInfo> > Terrain::getDebugRenderMap(bool selector) {
+std::map<int, std::vector<InstInfo<ObjModel> > > Terrain::getDebugRenderMap(bool selector) {
 	int ind;
-	std::map< int, std::vector<InstInfo> > renderInfo;
-	InstInfo ii;
+	std::map< int, std::vector<InstInfo<ObjModel> > > renderInfo;
+	InstInfo<ObjModel> ii;
 	for( int i=0; i<terrain_size; i++ ) {
 		for( int j=0; j<terrain_size; j++ ) {
 			for( int k=0; k<terrain_size; k++ ) {

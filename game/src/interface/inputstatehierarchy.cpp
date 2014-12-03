@@ -32,18 +32,30 @@ void InputStateHierarchy::addDevice( Device * device_in ) {
 	
 }
 */
-void InputStateHierarchy::addState( State * state_in ) {
+void InputStateHierarchy::pushState( State * state_in ) {
 	states.push_back(state_in);
+}
+void InputStateHierarchy::popState() {
+	delete states.back();
+	states.pop_back();
 }
 
 void InputStateHierarchy::update() {
-	for( int i=0; i<da.size(); i++ )
+	for( int i=0; i<da.size(); i++ ) {
 		da[i]->update();
+		da_mask[i]->clear();
+//		da_mask[i]->update();
+	}
 }
 
 void InputStateHierarchy::processInputs() {
-	update();
+//	update();
 	for( int i = states.size()-1; i>=0; i-- ) {
 		states[i]->processInputs();
 	}
+}
+
+void InputStateHierarchy::renderStates() {
+	for( int i=0; i<states.size(); i++ )
+		states[i]->Render();
 }

@@ -16,11 +16,13 @@ public:
 	~InputStateHierarchy();
 	template<typename T>
 	void addDevice();
-	void addState( State * state_in );
+	void pushState( State * state_in );
+	void popState();
 
 	void update();
 
 	void processInputs();
+	void renderStates();
 };
 
 template<typename T>

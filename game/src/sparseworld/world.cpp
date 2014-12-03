@@ -72,58 +72,94 @@ void World::MoveObject( Object * obj, const glm::vec4 & offset ) {
 //	*(glm::vec4 *)&(cloud->points[obj->index]) += offset;
 }
 
-void World::MoveFocusForward(int ddsize, int* ddata) {
+State* World::MoveFocusForward(int ddsize, float* ddata) {
 	objects[focus]->Move(0.5f*objects[focus]->getForward());
+	return 0;
 }
 
-void World::MoveFocusRight(int ddsize, int* ddata) {
+State* World::MoveFocusRight(int ddsize, float* ddata) {
 	objects[focus]->Move(0.5f*objects[focus]->getRight());
+	return 0;
 }
 
-void World::MoveFocusLeft(int ddsize, int* ddata) {
+State* World::MoveFocusLeft(int ddsize, float* ddata) {
 	objects[focus]->Move(-0.5f*objects[focus]->getRight());
+	return 0;
 }
 
-void World::MoveFocusBack(int ddsize, int* ddata) {
+State* World::MoveFocusBack(int ddsize, float* ddata) {
 	objects[focus]->Move(-0.5f*objects[focus]->getForward());
+	return 0;
 }
 
-void World::RotFocusRight(int ddsize, int* ddata) {
+State* World::RotFocusRight(int ddsize, float* ddata) {
 	objects[focus]->rotY(-.05);
+	return 0;
 }
 
-void World::RotFocusLeft(int ddsize, int* ddata) {
+State* World::RotFocusLeft(int ddsize, float* ddata) {
 	objects[focus]->rotY(.05);
+	return 0;
 }
 
-void World::RotFocusUp(int ddsize, int* ddata) {
+State* World::RotFocusUp(int ddsize, float* ddata) {
 	objects[focus]->rotX(.05);
+	return 0;
 }
 
-void World::RotFocusDown(int ddsize, int* ddata) {
+State* World::RotFocusDown(int ddsize, float* ddata) {
 	objects[focus]->rotX(-.05);
+	return 0;
 }
 
-void World::focusCamera(int ddsize, int* ddata) {
+State* World::focusCamera(int ddsize, float* ddata) {
 	btTransform trans;
 	objects[focus]->getWorldTransform(trans);
 	objects[camera]->setWorldTransform(trans);
 	focus = camera;
 //	printv(*(glm::vec4 *)&(cloud->points[focus]));
+	return 0;
 }
 
-void World::focusNext(int ddsize, int* ddata) {
+State* World::focusNext(int ddsize, float* ddata) {
 	focus++;
 	if( focus > objects.size() )
 		focus = 0;
 //	printv(*(glm::vec4 *)&(cloud->points[focus]));
+	return 0;
 }
+/* //Move to Controller class
+State* World::raySelect(int ddsize, float* ddata) {
+	btVector3 start, end;
+	std::pair<glm::vec4, glm::vec4> p = view->getCloseFar(ddata[0], ddata[1]);
+	start = *(btVector3 *)&p.first;
+	end = *(btVector3 *)&p.second;
+
+	btCollisionWorld::AllHitsRayResultCallback crr_callback(start, end);
+	dynamicsWorld->rayTest(start, end, crr_callback);
+
+	btRigidBody * rb;
+	Object * obj;
+	for( int i=0; i<crr_callback.m_collisionObjects.size(); i++ ) {
+		rb = (btRigidBody *) crr_callback.m_collisionObjects[i];
+		obj = (Object *)(rb->getMotionState());
+		if( obj->getType() != 10 0 {
+			continue;
+		}
+		((Renderable *)obj)->addRenderInfo(renderInfo);
+	}
+	return 0;
+}
+*/
 
 void World::Wiggle() {
 	for( int i=0; i<renObjs.size(); i++ ) {
 		MoveObject( renObjs[i], glm::vec4( (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, (float)rand()/RAND_MAX - .5, 0.0f ) );
 	}
 }
+
+
+
 
 
 

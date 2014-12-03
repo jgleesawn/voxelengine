@@ -21,7 +21,7 @@ class World;
 
 class Terrain {
 public:
-	GLmanager * glm;
+	GLmanager<ObjModel> * glm;
 	float chunk_size;
 	glm::vec4 alignment;
 	glm::vec4 pos;
@@ -34,11 +34,11 @@ public:
 	Terrain(World *);
 	~Terrain();
 
-	void setValues(GLmanager *);
+	void setValues(GLmanager<ObjModel> *);
 
 	void GenerateTerrain();
-	std::map<int, std::vector<InstInfo> > getRenderMap();
-	std::map<int, std::vector<InstInfo> > getDebugRenderMap(bool selector = false);
+	std::map<int, std::vector<InstInfo<ObjModel> > > getRenderMap();
+	std::map<int, std::vector<InstInfo<ObjModel> > > getDebugRenderMap(bool selector = false);
 //selector is a stop-gap measure while colors are still passed as a uniform variable.
 //Should remove this, add a color attribute to the renderer.
 //On doing so, can use renderable check to set color for debug boxes.

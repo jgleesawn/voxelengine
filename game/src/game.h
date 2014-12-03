@@ -26,8 +26,8 @@
 class Game {
 	
 public:
-	GLmanager glm;
-	InstRenderer * ren;
+	GLmanager<ObjModel> glm;
+	InstRenderer<ObjModel> * ren;
 	Viewport * view;
 	World w;
 

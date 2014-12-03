@@ -1,8 +1,9 @@
 #include "viewport.h"
 
-Viewport::Viewport(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in, float m_in, btCollisionShape * shape_in, glm::mat4 perspec_in) : Object(pos_in, or_in, p_in, y_in, m_in, shape_in) {
+Viewport::Viewport(glm::vec4 pos_in, glm::quat or_in, float p_in, float y_in, float m_in, btCollisionShape * shape_in, float cdist_in, float fdist_in, float aspect_in, float fov_in) 
+	: cdist(cdist_in), fdist(fdist_in), aspect(aspect_in), fov(fov_in), Object(pos_in, or_in, p_in, y_in, m_in, shape_in) {
+	perspectiveMatrix = glm::perspective(fov, aspect, cdist, fdist);
 	type = 1;
-	perspectiveMatrix = perspec_in;
 }
 
 void Viewport::Move(glm::vec4 offset) {
@@ -16,9 +17,8 @@ void Viewport::Move(glm::vec4 offset) {
 std::pair<glm::vec4, glm::vec4> Viewport::getCloseFar(float xmf, float ymf) {
 	glm::quat qv, qr;
 	float close_height, close_width;
-	float cdist = 0.1f;
-	float fdist = 100.0f;
-	close_height = close_width = cdist*glm::tan(glm::radians(45.0f));
+	close_width = cdist*glm::tan(fov);
+	close_height = aspect*close_width;
 	float av = glm::atan(xmf * close_width / cdist);
 	float ar = glm::atan(ymf * close_height / cdist);
 	glm::vec4 vup = getUp();

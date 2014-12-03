@@ -1,69 +1,16 @@
 #include "instrenderer.h"
 
-void InstRenderer::Initialize() {
-	std::vector<shaderName> shaderNames;
-	shaderNames.push_back(shaderName(GL_VERTEX_SHADER, std::string("renderers/voxel.v.shader")));
-//	shaderNames.push_back(shaderName(GL_GEOMETRY_SHADER, std::string("renderers/basic.g.shader")));
-	shaderNames.push_back(shaderName(GL_FRAGMENT_SHADER, std::string("renderers/voxel.f.shader")));
-	theProgram = GLProgramBase().InitializeProgram(shaderNames);
-
-	std::cout << theProgram << std::endl;
-
-	glUseProgram(theProgram);
-
-//	GLint uvar[5];
-	uvar[0] = glGetUniformLocation( theProgram, "lowerLeftBound");
-	uvar[1] = glGetUniformLocation( theProgram, "resolution");
-	uvar[2] = glGetUniformLocation( theProgram, "viewOffset");
-	uvar[3] = glGetUniformLocation( theProgram, "viewRotation");
-	uvar[4] = glGetUniformLocation( theProgram, "Perspective");
-	uvar[5] = glGetUniformLocation( theProgram, "uColor");
-
-	for( int i=0; i<numUniforms; i++ )
-		std::cout << uvar[i] << std::endl;
-	glUseProgram(0);
-}
-
-InstRenderer::InstRenderer() { 
-//	std::cout << "inst" << std::endl;
-	glm = NULL;
-	uvar = new int[6];
-	numUniforms = 6;
-}
-
-
-/*
-void InstRenderer::setCameraRotationPerspective(const glm::mat4 & Rotation, const glm::mat4 & Perspective) {
-	glm::mat4 rotpersp = Perspective*Rotation;
-//Transposes matrix on glImport so multiplication must be reversed before transpose.
-	glUniformMatrix4fv(uvar[3], 1, GL_TRUE, &rotpersp[0][0]);
-	glUniformMatrix4fv(uvar[4], 1, GL_TRUE, &glm::mat4(1.0f)[0][0]);
-
-//	glUniformMatrix4fv(uvar[3], 1, GL_TRUE, &Rotation[0][0]);
-//	glUniformMatrix4fv(uvar[4], 1, GL_TRUE, &Perspective[0][0]);
-}
-
-void InstRenderer::setCameraPos( const glm::vec4 & vpos ) {
-	glUniform4f(uvar[2], vpos[0], vpos[1], vpos[2], 0.0f );
-}
-*/
-
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
-void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & vii, const glm::vec4 & llb, const float & res ) {
+template<>
+void InstRenderer<ObjModel>::RenderInst( const Inst & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
 
-//	for( int i=0; i<3; i++ )
-//		std::cout << llb[i] << " ";
-//	std::cout << std::endl;
-//	std::cout << std::endl;
-		
 	glUniform4f(uvar[5], 0.5f, 0.5f, 0.0f, 1.0f);
-	
 
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo<ObjModel>)*vii.size(), vii.data());
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	
 	GLuint vao = inst.VAO;
@@ -71,18 +18,15 @@ void InstRenderer::RenderInst( const Inst & inst, const std::vector<InstInfo> & 
 	
 	int count = vii.size();
 	int cind = inst.numIndicesPerInstance;
-//std::cout << inst.VBO << " " << inst.IBO << " " << inst.InstBO << " " << inst.VAO << std::endl;
-//std::cout << cind << " " << count << std::endl;
-//	glDrawElementsInstanced( GL_POINTS, cind, GL_UNSIGNED_INT, (void*)0, count );
 	glDrawElementsInstanced( GL_TRIANGLES, cind, GL_UNSIGNED_INT, (void*)0, count );
-//	glDrawElementsBaseVertex( GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0, 0 );
 	glBindVertexArray(0);
 }
 
 //USING LLB AS A UNIFORM COLOR AS A STOP-GAP MEASURE
 //Coincides with note in terrain.h
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
-void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo> & vii, const glm::vec4 & llb, const float & res ) {
+template<>
+void InstRenderer<ObjModel>::WireframeInst( const Inst & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
@@ -90,7 +34,7 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	glUniform4f(uvar[5], llb[0], llb[1], llb[2], llb[3]); //0.0f, 1.0f, 1.0f, 1.0f);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, inst.InstBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo)*vii.size(), vii.data());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InstInfo<ObjModel>)*vii.size(), vii.data());
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	GLuint vao = inst.VAO;
@@ -102,11 +46,14 @@ void InstRenderer::WireframeInst( const Inst & inst, const std::vector<InstInfo>
 	glBindVertexArray(0);
 }
 
-void InstRenderer::DebugGrid() {
-	glUseProgram(theProgram);
-	glUniform1f(uvar[1], 1.0f);
+//Should only work with T=ObjModel
+//Move function to .cpp when you specialize
+template<>
+void InstRenderer<ObjModel>::DebugGrid() {
+	glUseProgram(this->theProgram);
+	glUniform1f(this->uvar[1], 1.0f);
 
-	glUniform4f(uvar[5], 1.0f, 0.0f, 1.0f, 1.0f);
+	glUniform4f(this->uvar[5], 1.0f, 0.0f, 1.0f, 1.0f);
 
 	glm::vec4 vbo[100][3][2];
 	for( int i=0; i<100; i++ ) {
@@ -143,14 +90,14 @@ void InstRenderer::DebugGrid() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 600*sizeof(int), ibo, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	InstInfo ii;
+	InstInfo<ObjModel> ii;
 	(*(glm::vec4 *)&ii.position) = glm::vec4(0.0f);
 	ii.rotMat = glm::mat4(1.0f);
 	ii.depthMask_in = 1.0f;
 	GLuint tmpInstBO;
 	glGenBuffers(1, &tmpInstBO);
 	glBindBuffer(GL_ARRAY_BUFFER, tmpInstBO);
-	glBufferData(GL_ARRAY_BUFFER, 1*sizeof(InstInfo), &ii, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 1*sizeof(InstInfo<ObjModel>), &ii, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	GLuint tmpVAO;
@@ -192,3 +139,5 @@ void InstRenderer::DebugGrid() {
 	glDeleteVertexArrays(1, &tmpVAO);
 
 }
+
+
