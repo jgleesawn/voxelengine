@@ -9,6 +9,7 @@
 #include "interface/state.h"
 
 #include "scenes/tempselection.h"
+#include "scenes/selection.h"
 
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
@@ -38,8 +39,9 @@ struct Controller {
 	State* RotFocusUp(int, float*);
 	State* RotFocusDown(int, float*);
 
-//HAS MEMORY LEAK
+//Does not HAS MEMORY LEAK
 	State* raySelect(int, float*);
+	State* StartSelecting(int, float*);
 
 };
 

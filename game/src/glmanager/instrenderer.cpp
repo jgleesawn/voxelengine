@@ -2,7 +2,7 @@
 
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
 template<>
-void InstRenderer<ObjModel>::RenderInst( const Inst & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
+void InstRenderer<ObjModel>::RenderInst( const Inst_t<ObjModel> & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);
@@ -26,7 +26,7 @@ void InstRenderer<ObjModel>::RenderInst( const Inst & inst, const std::vector<In
 //Coincides with note in terrain.h
 //Transpose = GL_TRUE because GLSL uses Column-Major where C++ typicall uses Row-Major
 template<>
-void InstRenderer<ObjModel>::WireframeInst( const Inst & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
+void InstRenderer<ObjModel>::WireframeInst( const Inst_t<ObjModel> & inst, const std::vector<InstInfo<ObjModel> > & vii, const glm::vec4 & llb, const float & res ) {
 	glUseProgram(theProgram);
 	glUniform4f(uvar[0], llb[0], llb[1], llb[2], 0.0f);
 	glUniform1f(uvar[1], res);

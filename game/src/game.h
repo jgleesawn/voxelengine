@@ -34,7 +34,7 @@ public:
 	World w;
 
 	std::vector<Controller *> players;
-	InputStateHierarchy ISH;
+//	InputStateHierarchy ISH;
 
 	Game();
 	~Game();

@@ -1,8 +1,8 @@
 #include "controller.h"
 
-Controller::Controller(World * w_in, int object_id_in) : w(w_in), object_id(object_id_in) {
+Controller::Controller(World * w_in, int object_id_in) : w(w_in), object_id(object_id_in), ISH(new TState<Controller>(this)) {
 	perspectiveMatrix = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
-	ISH.pushState(new TState<Controller>(&ISH, this));
+//	ISH.pushState(new TState<Controller>(this));
 }
 
 void Controller::PrepScene() {
@@ -68,7 +68,20 @@ State* Controller::raySelect(int ddsize, float* ddata) {
 	tselect->setGLM(w->glm);
 	tselect->view = (Viewport *)w->objects[object_id];
 	tselect->w = w;
-	State * s_ret = new TState<TempSelection>(&ISH, tselect);
+	State * s_ret = new TState<TempSelection>(tselect);
+	return s_ret;
+}
+
+//Uses Mouse Input
+//Abuses the fact that Controller object has been passed a Viewport
+State* Controller::StartSelecting(int ddsize, float* ddata) {
+	Selecting * sing = new Selecting;
+	sing->setRen(w->ren);
+	sing->setGLM(w->glm);
+	sing->view = (Viewport *)w->objects[object_id];
+	sing->w = w;
+	sing->PlaceStart(ddata[0], ddata[1]);
+	State * s_ret = new TState<Selecting>(sing);
 	return s_ret;
 }
 

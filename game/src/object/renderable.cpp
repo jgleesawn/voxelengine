@@ -4,10 +4,10 @@ Renderable::Renderable(glm::vec4 pos_in, int inst_id, glm::quat or_in, float p_i
 type = 10;
 }
 
-void Renderable::addRenderInfo(std::map<int, std::vector<InstInfo<ObjModel> > > & renderInfo) {
+void Renderable::addRenderInfo(std::map<int, std::vector<InstInfo<ObjModel> > > & renderInfo, float scale) {
 	InstInfo<ObjModel> ii;
 	*((glm::vec4 *) &ii.position) = getPosition();
-	ii.depthMask_in = 1;
+	ii.depthMask_in = 1.0f;//scale;
 	*(glm::mat4 *) &ii.rotMat = glm::transpose(getQRotMat());
 	renderInfo[instance_id].push_back(ii);
 }

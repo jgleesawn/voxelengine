@@ -2,6 +2,7 @@
 
 #include "../sparseworld/world.h"
 
+//Moving from this Constructor format.  Just haven't updated/used World state
 template <>
 TState<World>::TState(InputStateHierarchy * ISH_in, World * obj_in) {
 	ISH = ISH_in;
@@ -24,8 +25,8 @@ TState<World>::TState(InputStateHierarchy * ISH_in, World * obj_in) {
 }
 
 template<>
-TState<Controller>::TState(InputStateHierarchy * ISH_in, Controller * obj_in) {
-	ISH = ISH_in;
+TState<Controller>::TState(Controller * obj_in ) {
+	ISH = 0;
 	obj = obj_in;
 	setInput(&Controller::MoveFocusForward, 0, (int)SDL_SCANCODE_W, 1, 0);
 	setInput(&Controller::MoveFocusLeft, 0, (int)SDL_SCANCODE_A, 1, 0);
@@ -38,25 +39,32 @@ TState<Controller>::TState(InputStateHierarchy * ISH_in, Controller * obj_in) {
 	setInput(&Controller::RotFocusDown, 0, (int)SDL_SCANCODE_DOWN, 1, 0);
 
 	setInput(&Controller::raySelect, 0, (int)SDL_SCANCODE_TAB, 1, 1);
+	setInput(&Controller::StartSelecting, 1, (int)SDL_BUTTON_LEFT, 1, 1);
 }
 
-//add source folder scenes and group derived classes there.
-//struct Selection : public Scene {};
-/*
 template<>
-TState<Selection>::TState(InputStateHierarchy * ISH_in, Selection * obj_in) {
-	ISH = ISH_in;
-	obj = obj_in;
-	setInput(&Selection::Dummy, 1, 1, 1, 0);
-}
-*/
-template<>
-TState<TempSelection>::TState(InputStateHierarchy * ISH_in, TempSelection * obj_in) {
-	ISH = ISH_in;
+TState<TempSelection>::TState(TempSelection * obj_in ) {
+	ISH = 0;
 	obj = obj_in;
 	setInput(&TempSelection::Finish, 0, (int)SDL_SCANCODE_TAB, 0, 1);
 	setInput(&TempSelection::Update, 0, (int)SDL_SCANCODE_TAB, 1, 1);
 }
+template <>
+TState<Selecting>::TState(Selecting * obj_in ) {
+	ISH = 0;
+	obj = obj_in;
+	setInput(&Selecting::Update, 1, (int)SDL_BUTTON_LEFT, 1, 1);//LMB down
+	setInput(&Selecting::Finish, 1, (int)SDL_BUTTON_LEFT, 0, 1);//LMB up
+}
+
+template<>
+TState<Selected>::TState(Selected * obj_in ) {
+	ISH = 0;
+	obj = obj_in;
+	setInput(&Selected::Update, 1, (int)SDL_BUTTON_LEFT, 0, 1);//LMB up
+	setInput(&Selected::DeSelect, 1, (int)SDL_BUTTON_LEFT, 1, 1);//LMB down
+}
+
 /*
 template <>
 TState<Selection::TState(InputStateHierarchy * ISH_in, Selecting * obj_in) {

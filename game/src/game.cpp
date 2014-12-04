@@ -43,6 +43,7 @@ for( int j=0; j<1; j++ ) {
 		q = glm::normalize(q);
 		Renderable * ro = new Renderable(pos, instance_id, q, 0, 0, 10, new btBoxShape(btVector3(1.0, 1.0, 1.0)));
 		ro->rigidBody->setRestitution(0.01f);
+//		ro->rigidBody->getCollisionShape()->setLocalScaling(btVector3(2.0f,2.0f,2.0f));
 //		std::cerr << ro->getType() << " ";
 
 		w.addObject(ro,pos);
@@ -55,7 +56,7 @@ for( int j=0; j<1; j++ ) {
 
 	players.push_back(new Controller(&w));
 
-	ISH.pushState(new TState<World>(&ISH, &w));
+//	ISH.pushState(new TState<World>(&ISH, &w));
 }
 Game::~Game() {
 	if( ren )

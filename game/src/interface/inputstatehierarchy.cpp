@@ -2,9 +2,11 @@
 #include "device.h"
 #include "state.h"
 
-InputStateHierarchy::InputStateHierarchy() {
+InputStateHierarchy::InputStateHierarchy(State * base_state) {
 		addDevice<SDLKeyboard>();
 		addDevice<SDLMouse>();
+		base_state->setISH(this);
+		pushState(base_state);
 /*		da.push_back(new SDLKeyboard);
 		da.push_back(new SDLMouse);
 		da_mask.push_back(new SDLKeyboard);
@@ -39,6 +41,11 @@ void InputStateHierarchy::popState() {
 	delete states.back();
 	states.pop_back();
 }
+void InputStateHierarchy::popStates(int num_to_pop) {
+	while( num_to_pop-- > 0 ) {
+		popState();
+	}
+}
 
 void InputStateHierarchy::update() {
 	for( int i=0; i<da.size(); i++ ) {
@@ -51,6 +58,8 @@ void InputStateHierarchy::update() {
 void InputStateHierarchy::processInputs() {
 //	update();
 	for( int i = states.size()-1; i>=0; i-- ) {
+		if( i >= states.size() )
+			continue;
 		states[i]->processInputs();
 	}
 }

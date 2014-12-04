@@ -22,8 +22,8 @@ public:
 	InstRenderer();
 	~InstRenderer() { }//glDeleteProgram(theProgram); }
 
-	void RenderInst(const Inst &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
-	void WireframeInst(const Inst &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
+	void RenderInst(const Inst_t<T> &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
+	void WireframeInst(const Inst_t<T> &, const std::vector<InstInfo<T> > &, const glm::vec4 &, const float &);
 
 	void DebugGrid();
 };

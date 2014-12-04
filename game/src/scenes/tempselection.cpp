@@ -6,7 +6,7 @@ State* TempSelection::Finish(int ddsize, float * ddata) {
 }
 
 State* TempSelection::Update(int ddsize, float * ddata) {
-//	std::cerr << "TempSelection::Update" << std::endl;
+	std::cerr << "TempSelection::Update" << std::endl;
 	btVector3 start, end;
 	std::pair<glm::vec4, glm::vec4> p = view->getCloseFar(ddata[0], ddata[1]);
 	start = *(btVector3 *)&p.first;

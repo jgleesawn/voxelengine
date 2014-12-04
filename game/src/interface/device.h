@@ -18,19 +18,20 @@ public:
 };
 
 //Add proper interface between SDLMouse and window size instead of hardcoded ratios.
+//Using size of 6 despite 5 buttons to let it align with SDL button values.
 class SDLMouse : public Device {
 public:
 	SDLMouse() {
 		vsize = 2;
 		vals = new float[vsize];
-		data.resize(5);
+		data.resize(6);
 	}
 	~SDLMouse() {
 		delete vals;
 	}
 	virtual void update() {
 		data.resize(0,0);
-		data.resize(5,0);
+		data.resize(6,0);
 		int x, y;
 		unsigned int mstate = SDL_GetMouseState(&x, &y);
 		vals[0] = (float)x/640.0f;
@@ -38,8 +39,8 @@ public:
 		vals[0] *= -1.0f; vals[0] += 0.5f;
 		vals[1] *= -1.0f; vals[1] += 0.5f;
 
-		for( int i=0; i<5; i++ )
-			data[i] = SDL_BUTTON(i+1);
+		for( int i=1; i<6; i++ )
+			data[i] = mstate & SDL_BUTTON(i);
 	}	
 };
 

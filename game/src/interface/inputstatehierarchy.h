@@ -12,12 +12,13 @@ public:
 	std::vector< Device * > da_mask;
 	std::vector< State * > states;
 
-	InputStateHierarchy();
+	InputStateHierarchy(State * base_state);
 	~InputStateHierarchy();
 	template<typename T>
 	void addDevice();
 	void pushState( State * state_in );
 	void popState();
+	void popStates(int);
 
 	void update();
 

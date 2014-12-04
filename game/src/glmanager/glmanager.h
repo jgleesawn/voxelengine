@@ -14,34 +14,17 @@
 #include "objmodel.h"
 #include "objloader.h"
 
-//Extend by making it a vector of vbos?
-//Customized loading by templated Load function.
-struct Inst {
-	GLuint VBO;
-	GLuint IBO;
-	GLuint InstBO;
-	GLuint VAO;
-	unsigned int numIndicesPerInstance;
-};
-
-template <typename T>
-struct InstInfo { };
-
-template <>
-struct InstInfo<ObjModel> {
-	GLfloat position[3];
-	GLfloat depthMask_in;
-	glm::mat4 rotMat;
-};
+#include "inst_t.h"
 
 template <typename T>
 class GLmanager {
 public:
-	std::vector<Inst *> gfxInst;
+	std::vector<Inst_t<T> *> gfxInst;
 
 	GLmanager() {}
 	~GLmanager();
-	int LoadInst(const ObjModel &, size_t = 100000);
+	int LoadInst(Inst_t<T> *);
+	int LoadInst(const T &, size_t = 100000);
 	int LoadInst(const std::string &, size_t = 100000);
 
 	void RemoveInst(int);
@@ -59,11 +42,6 @@ GLmanager<T>::~GLmanager() {
 
 	while( !gfxInst.empty() ) {
 		if( gfxInst.back() ) {
-			glDeleteBuffers(1, &gfxInst.back()->VBO);
-			glDeleteBuffers(1, &gfxInst.back()->IBO);
-			glDeleteBuffers(1, &gfxInst.back()->InstBO);
-			glDeleteVertexArrays(1, &gfxInst.back()->VAO);
-	
 			delete gfxInst.back();
 		}
 		gfxInst.pop_back();
@@ -71,17 +49,25 @@ GLmanager<T>::~GLmanager() {
 }
 
 template<typename T>
+int GLmanager<T>::LoadInst(Inst_t<T> * inst) {
+	gfxInst.push_back(inst);
+	return gfxInst.size()-1;
+}
+
+template<typename T>
+int GLmanager<T>::LoadInst(const T & obj, size_t max_num_instances) {
+	gfxInst.push_back(new Inst_t<T>(obj, max_num_instances));
+	return gfxInst.size()-1;
+}
+template<typename T>
 int GLmanager<T>::LoadInst(const std::string & fileName, size_t max_num_instances ) {
-	return LoadInst(std::move(loadObjFile(fileName)), max_num_instances);
+	gfxInst.push_back(new Inst_t<T>(std::move(loadObjFile(fileName)), max_num_instances));
+	return gfxInst.size()-1;
 }
 
 template<typename T>
 void GLmanager<T>::RemoveInst(int instance_id) {
 	if( gfxInst[instance_id] ) {
-		glDeleteBuffers(1, &gfxInst[instance_id]->VBO);
-		glDeleteBuffers(1, &gfxInst[instance_id]->IBO);
-		glDeleteBuffers(1, &gfxInst[instance_id]->InstBO);
-		glDeleteVertexArrays(1, &gfxInst[instance_id]->VAO);
 		delete gfxInst[instance_id];
 		gfxInst[instance_id] = NULL;
 	}
