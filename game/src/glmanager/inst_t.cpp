@@ -75,6 +75,7 @@ Inst_t<ObjModel>::Inst_t(const ObjModel & obj, size_t max_num_instances) {
 }
 
 #include <iostream>
+#include "util/glm_util.h"
 template<>
 Inst_t<ObjModel>::Inst_t(btShapeHull & sh, size_t max_num_instances) {
 	sh.buildHull(0.0f);//Margin of 0.0f
@@ -84,6 +85,9 @@ Inst_t<ObjModel>::Inst_t(btShapeHull & sh, size_t max_num_instances) {
 	size_t max_instances = max_num_instances;
 
 	numIndicesPerInstance = sh.numIndices();
+
+	for( int i=0; i<sh.numVertices(); i++ )
+		printv(((glm::vec4*)sh.getVertexPointer())[i]);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer( GL_ARRAY_BUFFER, VBO );

@@ -1,8 +1,8 @@
 #include "selection.h"
 
 Selecting::Selecting() : selectionBox(glm::vec4(0.0f), 0) {
-//	g_obj.setCollisionShape(new btSphereShape(1.0f));
-	g_obj.setCollisionShape(new btBoxShape(btVector3(1.0, 1.0, 1.0)));
+	g_obj.setCollisionShape(new btSphereShape(1.0f));
+//	g_obj.setCollisionShape(new btBoxShape(btVector3(1.0, 1.0, 1.0)));
 	g_obj.setWorldTransform(btTransform());
 //	g_obj.setCollisionFlags( g_obj.getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE );
 }
@@ -38,47 +38,45 @@ void Selecting::Render() {
 }
 
 #include <iostream>
-#include <typeinfo>
 State* Selecting::Update(int ddsize, float * ddata) {
 	std::pair<glm::vec4, glm::vec4> npair = view->getCloseFar(ddata[0], ddata[1]);
 
 	glm::vec4 smid = (sclose + sfar)/2.0f;
 	glm::vec4 nmid = (npair.first + npair.second)/2.0f;
-	glm::vec4 avgmid = (smid + nmid)/2.0f;
-	
-	smid.w = 0.0f;
-	nmid.w = 0.0f;
-	glm::vec4 vdir = nmid-smid;
-	glm::vec3 v3dir(vdir.x,vdir.y,vdir.z);
-//	btVector3 bscale(1.0f, 1.0f, glm::length2(v3dir));
-//	glm::vec3 vscale = *(glm::vec3 *)&bscale; //(1.0f, 1.0f, glm::length(v3dir));
-	btVector3 bscale = g_obj.getCollisionShape()->getLocalScaling() * btVector3(1.0f, 1.0f, 1.01f);
-//	bscale.setZ(glm::length2(v3dir));
-	g_obj.getCollisionShape()->getLocalScaling();
-	glm::vec4 vscale = *(glm::vec4 *)&bscale;
-	vscale[2] = (double)glm::length(v3dir);
-	if( vscale[2] < 0.2f )
-		vscale[2] = 0.2f;
-	std::cerr << "Scalar vector." << std::endl;
-	printv(vscale);
+/*
+	glm::vec4 bmin = glm::min(sclose, sfar);
+	bmin = glm::min(bmin, npair.first);
+	bmin = glm::min(bmin, npair.second);
 
-	v3dir = glm::normalize(v3dir);
-	glm::quat rotq = glm::rotation(glm::vec3(0.0f, 0.0f, -1.0f), v3dir);
-	g_obj.getCollisionShape()->setLocalScaling(*(btVector3 *)&vscale);
-	g_obj.getWorldTransform().setOrigin(*(btVector3 *)&avgmid);
-	btQuaternion q;
-	q.setX(rotq.x); q.setY(rotq.y); q.setZ(rotq.z); q.setW(rotq.w);
+	glm::vec4 bmax = glm::max(sclose, sfar);
+	bmax = glm::max(bmax, npair.first);
+	bmax = glm::max(bmax, npair.second);
+
+	glm::vec4 bcenter = (bmin + bmax)/2.0f;
+	glm::vec4 halfedge = bcenter - bmin;
+//	printv(bcenter); printv(halfedge);
+	glm::vec3 hedge(halfedge.x, halfedge.y, halfedge.z);
+	glm::quat rotq = glm::rotation(glm::vec3(0.0f, 0.0f, -0.5f), hedge);
+//	g_obj.getCollisionShape()->setLocalScaling(1.1*g_obj.getCollisionShape()->getLocalScaling());
+	g_obj.getCollisionShape()->setLocalScaling(*(btVector3 *)&halfedge);
+	g_obj.getWorldTransform().setOrigin(*(btVector3 *)&bcenter);
 	g_obj.getWorldTransform().setRotation(*(btQuaternion *)&rotq);
-	
-	btTransform trans = g_obj.getWorldTransform();
-	selectionBox.setWorldTransform(g_obj.getWorldTransform());
+*/
+	glm::vec4 middiff = nmid-smid;
+	g_obj.getCollisionShape()->setLocalScaling(*(btVector3*)&middiff);
+	glm::vec4 avgmid = (smid + nmid)/2.0f;
+	g_obj.getWorldTransform().setOrigin(*(btVector3 *)&avgmid);
 
+	btTransform trans = g_obj.getWorldTransform();
+//	trans.setRotation(btQuaternion(1.0f, 0.0f, 0.0f, 0.0f));
+/*
+	for( int i=0; i<3; i++ )
+		std::cerr << trans.getOrigin()[i] << " ";
+	std::cerr << std::endl;
+*/
+	selectionBox.setWorldTransform(g_obj.getWorldTransform());
+//	printm(selectionBox.getQRotMat());
 	if( g_obj.getCollisionShape()->isConvex() ) {
-		std::cerr << "Recompute Hull." << std::endl;
-		btVector3 bscale = g_obj.getCollisionShape()->getLocalScaling();
-		for( int i=0; i<4; i++ )
-			std::cerr << bscale[i] << " ";
-		std::cerr << std::endl;
 		btShapeHull sh((btConvexShape*)g_obj.getCollisionShape());
 		Inst_t<ObjModel> * inst = new Inst_t<ObjModel>(sh);
 		glm->RemoveInst(selectionBox.instance_id);
